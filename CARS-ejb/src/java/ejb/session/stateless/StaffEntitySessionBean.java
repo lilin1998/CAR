@@ -111,12 +111,12 @@ public class StaffEntitySessionBean implements StaffEntitySessionBeanRemote, Sta
             }
             else
             {
-                throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
+                throw new InvalidLoginCredentialException("Password is invalid!");
             }
         }
         catch(StaffNotFoundException ex)
         {
-            throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
+            throw new InvalidLoginCredentialException("Username does not exist!");
         }
     }
     

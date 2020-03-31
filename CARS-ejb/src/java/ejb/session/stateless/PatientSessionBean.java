@@ -43,7 +43,7 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
         
         try 
         {
-            p = retrievePatientByPatientId(p.getPatientId());
+            p = retrievePatientByPatientId(newPatientEntity.getPatientId());
         }
         catch(PatientNotFoundException ex)
         {

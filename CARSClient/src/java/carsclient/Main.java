@@ -6,6 +6,7 @@ import ejb.session.stateless.PatientSessionBeanRemote;
 import ejb.session.stateless.StaffEntitySessionBeanRemote;
 import javax.ejb.EJB;
 import util.exception.DoctorNotFoundException;
+import util.exception.PatientNotFoundException;
 
 public class Main 
 {
@@ -18,7 +19,7 @@ public class Main
     @EJB
     private static AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
     
-    public static void main(String[] args) throws DoctorNotFoundException 
+    public static void main(String[] args) throws DoctorNotFoundException, PatientNotFoundException 
     {
         MainApp mainApp = new MainApp(staffEntitySessionBeanRemote, doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote);
         mainApp.runApp();

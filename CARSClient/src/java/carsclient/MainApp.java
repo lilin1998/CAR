@@ -8,6 +8,7 @@ import entity.StaffEntity;
 import java.util.Scanner;
 import util.exception.DoctorNotFoundException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.PatientNotFoundException;
 
 public class MainApp 
 {
@@ -18,6 +19,7 @@ public class MainApp
     
     private RegistrationOperationModule registrationOperationModule;
     private AppointmentOperationModule appointmentOperationModule;
+    private AdministrationOperationModule administrationOperationModule;
     
     private StaffEntity currentStaffEntity;
     
@@ -41,7 +43,7 @@ public class MainApp
 
     
    
-    public void runApp() throws DoctorNotFoundException
+    public void runApp() throws DoctorNotFoundException, PatientNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -68,6 +70,7 @@ public class MainApp
                         
                         registrationOperationModule = new RegistrationOperationModule(doctorSessionBeanRemote, appointmentEntitySessionBeanRemote, patientSessionBeanRemote, currentStaffEntity);
                         appointmentOperationModule = new AppointmentOperationModule(doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote);
+                        administrationOperationModule = new AdministrationOperationModule(doctorSessionBeanRemote, patientSessionBeanRemote, staffEntitySessionBeanRemote);
                         menuMain();
                     }
                     catch(InvalidLoginCredentialException ex) 
@@ -118,7 +121,7 @@ public class MainApp
     
     
     
-    private void menuMain() throws DoctorNotFoundException
+    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -141,7 +144,7 @@ public class MainApp
 
                 if (response == 1)
                 {
-                    
+                    registrationOperationModule.registrationOperation();                    
                 }
                 else if (response == 2)
                 {
@@ -149,7 +152,7 @@ public class MainApp
                 }
                 else if (response == 3)
                 {
-                    registrationOperationModule.registrationOperation();
+                    administrationOperationModule.administrationOperation();
                 }
                 else if (response == 4)
                 {
