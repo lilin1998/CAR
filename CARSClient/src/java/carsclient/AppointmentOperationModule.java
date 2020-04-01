@@ -8,7 +8,6 @@ import entity.DoctorEntity;
 import entity.PatientEntity;
 import java.sql.Date;
 import java.sql.Time;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
@@ -137,8 +136,6 @@ public class AppointmentOperationModule
         String date;
         DoctorEntity doctor = null;
         PatientEntity patient = null;
-        List<AppointmentEntity> patientAppointment = new ArrayList<>();
-        List<AppointmentEntity> doctorAppointment = new ArrayList<>();
         
         System.out.println("*** CARS :: Appointment Operation :: Add Appointment ***\n");
         
@@ -251,10 +248,8 @@ public class AppointmentOperationModule
         
         AppointmentEntity newAppointmentEntity = new AppointmentEntity(doctor, actualDate, time, patient);
         appointmentEntitySessionBeanRemote.createNewAppointment(newAppointmentEntity);
-        patientAppointment = patient.getPatientAppointments();
-        patient.setPatientAppointments(patientAppointment);
-        doctorAppointment = doctor.getdoctorAppointments();
-        doctor.setDoctorAppointments(doctorAppointment);
+        patientSessionBeanRemote.updatePatientList(patientIdentityNo);
+        doctorSessionBeanRemote.updateDoctorList(doctorId);
         
         String patientName = patient.getFirstName() + " " + patient.getLastName();
         String doctorName = doctor.getFirstName() + " " + doctor.getLastName();
