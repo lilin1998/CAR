@@ -5,7 +5,9 @@ import ejb.session.stateless.DoctorSessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
 import entity.AppointmentEntity;
 import entity.DoctorEntity;
+import entity.PatientEntity;
 import java.sql.Date;
+import java.sql.Time;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
@@ -39,7 +41,7 @@ public class AppointmentOperationModule
     
     
     
-    public void appointmentOperation() throws DoctorNotFoundException
+    public void appointmentOperation() throws DoctorNotFoundException, PatientNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -127,12 +129,13 @@ public class AppointmentOperationModule
     
     
     
-    private void addNewAppointment() throws DoctorNotFoundException
+    private void addNewAppointment() throws DoctorNotFoundException, PatientNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         Long doctorId;
         String date;
-        DoctorEntity doctor;
+        DoctorEntity doctor = null;
+        PatientEntity patient = null;
         
         System.out.println("*** CARS :: Appointment Operation :: Add Appointment ***\n");
         
@@ -229,9 +232,29 @@ public class AppointmentOperationModule
         
         System.out.print("Enter Time> ");
         String timeInput = scanner.nextLine().trim();
+        timeInput += ":00";
+        Time time = Time.valueOf(timeInput);
+        
         System.out.print("Enter Patient Identity Number> ");
         String patientIdentityNo = scanner.nextLine().trim();
+        try 
+        {
+            patient =  patientSessionBeanRemote.retrievePatientByPatientIdentityNumber(patientIdentityNo);
+        } 
+        catch (PatientNotFoundException ex) 
+        {
+            System.out.println("Error in retrieving Patient's identity Number!\n");
+        }
         
+        AppointmentEntity newAppointmentEntity = new AppointmentEntity(doctor, actualDate, time, patient);
+        appointmentEntitySessionBeanRemote.createNewAppointment(newAppointmentEntity);
+        patientSessionBeanRemote.addAppointmentToPatientRecord(patientIdentityNo, newAppointmentEntity);
+        doctorSessionBeanRemote.addAppointmentToDoctorRecord(doctor.getDoctorId(), newAppointmentEntity);
+        
+        String patientName = patient.getFirstName() + " " + patient.getLastName();
+        String doctorName = doctor.getFirstName() + " " + doctor.getLastName();
+        
+        System.out.println(patientName + " appointment with " + doctorName + " at " + timeInput + " on " + date + " has been added.\n");
     }
     
     

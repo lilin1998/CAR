@@ -3,7 +3,8 @@ package carsclient;
 import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.DoctorSessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
-import entity.GenderEnum;
+import static entity.GenderEnum.F;
+import static entity.GenderEnum.M;
 import entity.PatientEntity;
 import entity.StaffEntity;
 import java.util.Scanner;
@@ -98,11 +99,11 @@ public class RegistrationOperationModule {
         System.out.print("Enter Gender> ");
         if (scanner.nextLine().trim().equals("M")) 
         {
-            newPatientEntity.setGender(GenderEnum.M);
+            newPatientEntity.setGender(M);
         } 
         else 
         {
-            newPatientEntity.setGender(GenderEnum.F);
+            newPatientEntity.setGender(F);
         }
         System.out.print("Enter Age> ");
         newPatientEntity.setAge(scanner.nextInt());
