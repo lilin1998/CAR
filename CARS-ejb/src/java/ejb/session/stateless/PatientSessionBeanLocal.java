@@ -3,6 +3,7 @@ package ejb.session.stateless;
 import entity.PatientEntity;
 import java.util.List;
 import util.exception.DeletePatientException;
+import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
 import util.exception.UpdatePatientException;
 
@@ -21,4 +22,6 @@ public interface PatientSessionBeanLocal
     public PatientEntity retrievePatientByPatientIdentityNumber(String identityNumber) throws PatientNotFoundException;
 
     public void updatePatientList(String identityNo) throws PatientNotFoundException;
+    
+    public void checkPassword(String password) throws PasswordException;
 }

@@ -15,6 +15,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.DeletePatientException;
+import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
 import util.exception.UpdatePatientException;
 
@@ -152,5 +153,15 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
         
         List<AppointmentEntity> patientAppointment = patientEntity.getPatientAppointments();
         patientEntity.setPatientAppointments(patientAppointment);
+    }
+    
+    @Override
+    public void checkPassword(String password) throws PasswordException
+    {
+        int intpw = Integer.valueOf(password);
+        if (!password.matches("\\d{6}")) 
+        {
+            throw new PasswordException("Password is invalid! Please make sure it is a 6 digit number.");
+        }
     }
 }

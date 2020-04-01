@@ -10,6 +10,7 @@ import java.security.NoSuchProviderException;
 import java.util.Scanner;
 import util.exception.DoctorNotFoundException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
 import util.exception.UpdatePatientException;
 
@@ -46,7 +47,7 @@ public class MainApp
 
     
    
-    public void runApp() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException
+    public void runApp() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -124,7 +125,7 @@ public class MainApp
     
     
     
-    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException
+    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
