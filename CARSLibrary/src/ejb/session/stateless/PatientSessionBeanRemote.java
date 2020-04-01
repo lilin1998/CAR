@@ -1,5 +1,6 @@
 package ejb.session.stateless;
 
+import entity.AppointmentEntity;
 import entity.PatientEntity;
 import java.util.List;
 import util.exception.DeletePatientException;
@@ -20,4 +21,5 @@ public interface PatientSessionBeanRemote
     
     public PatientEntity retrievePatientByPatientIdentityNumber(String identityNumber) throws PatientNotFoundException;
 
+    public void addAppointmentToPatientRecord(String patientIdentityNo, AppointmentEntity newAppointmentEntity) throws PatientNotFoundException;
 }

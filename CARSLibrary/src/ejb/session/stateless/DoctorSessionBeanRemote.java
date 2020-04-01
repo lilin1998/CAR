@@ -1,12 +1,11 @@
 package ejb.session.stateless;
 
+import entity.AppointmentEntity;
 import entity.DoctorEntity;
 import java.util.List;
 import util.exception.AppointmentNotFoundException;
 import util.exception.DeleteDoctorException;
-import util.exception.DoctorExistException;
 import util.exception.DoctorNotFoundException;
-import util.exception.UnknownPersistenceException;
 import util.exception.UpdateDoctorException;
 
 public interface DoctorSessionBeanRemote {
@@ -21,4 +20,5 @@ public interface DoctorSessionBeanRemote {
     
     public void deleteDoctor(DoctorEntity doctorEntity) throws DeleteDoctorException, DoctorNotFoundException, AppointmentNotFoundException;
     
+    public void addAppointmentToDoctorRecord(Long doctorId, AppointmentEntity newAppointmentEntity) throws DoctorNotFoundException;
 }

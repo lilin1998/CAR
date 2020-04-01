@@ -1,6 +1,8 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,6 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class PatientEntity implements Serializable 
@@ -33,6 +36,8 @@ public class PatientEntity implements Serializable
     private String phone;
     @Column(nullable = false)
     private String address;
+    @OneToMany
+    private List<AppointmentEntity> patientAppointments;
 
     public PatientEntity() 
     {
@@ -49,6 +54,7 @@ public class PatientEntity implements Serializable
         this.age = age;
         this.phone = phone;
         this.address = address;
+        this.patientAppointments = new ArrayList<>();
     }
     
     public PatientEntity(Long patientId, String identityNumber, String password, String firstName, String lastName, GenderEnum gender, Integer age, String phone, String address) 
@@ -63,6 +69,7 @@ public class PatientEntity implements Serializable
         this.age = age;
         this.phone = phone;
         this.address = address;
+        this.patientAppointments = new ArrayList<>();
     }
 
     public Long getPatientId() 
@@ -190,5 +197,13 @@ public class PatientEntity implements Serializable
     public void setAddress(String address) 
     {
         this.address = address;
+    }
+
+    public List<AppointmentEntity> getPatientAppointments() {
+        return patientAppointments;
+    }
+
+    public void setPatientAppointments(List<AppointmentEntity> patientAppointments) {
+        this.patientAppointments = patientAppointments;
     }
 }

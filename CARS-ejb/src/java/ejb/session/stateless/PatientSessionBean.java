@@ -10,6 +10,8 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.DeletePatientException;
@@ -84,13 +86,14 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
     @Override
     public PatientEntity retrievePatientByPatientIdentityNumber(String identityNumber) throws PatientNotFoundException
     {
-        PatientEntity patientEntity = em.find(PatientEntity.class, identityNumber);
+        Query query = em.createQuery("SELECT p from PatientEntity p WHERE p.identityNumber = :inIdentityNumber");
+        query.setParameter("inIdentityNumber", identityNumber);
         
-        if (patientEntity != null)
+        try 
         {
-            return patientEntity;
-        }
-        else 
+            return (PatientEntity)query.getSingleResult();
+        } 
+        catch (NoResultException | NonUniqueResultException ex) 
         {
             throw new PatientNotFoundException("Patient Identity Number " + identityNumber + " does not exist!");
         }
@@ -137,5 +140,17 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
         {
             throw new DeletePatientException("Patient ID " + patientId + " is associated with existing appointments and cannot be deleted!");
         }
+    }
+    
+    
+    
+    @Override
+    public void addAppointmentToPatientRecord(String patientIdentityNo, AppointmentEntity newAppointmentEntity) throws PatientNotFoundException
+    {
+        PatientEntity patientEntity = retrievePatientByPatientIdentityNumber(patientIdentityNo);
+        
+        List<AppointmentEntity> patientAppointments = appointmentEntitySessionBeanLocal.retrieveAppointmentByPatientIdentityNo(patientIdentityNo);
+        patientAppointments.add(newAppointmentEntity);
+        patientEntity.setPatientAppointments(patientAppointments);
     }
 }

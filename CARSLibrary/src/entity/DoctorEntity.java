@@ -27,7 +27,7 @@ public class DoctorEntity implements Serializable
     @Column(length = 32, nullable = false)
     private String qualifications;
     @OneToMany
-    private List<AppointmentEntity> appointments;
+    private List<AppointmentEntity> doctorAppointments;
     
     public DoctorEntity() 
     {
@@ -39,7 +39,7 @@ public class DoctorEntity implements Serializable
         this.lastName = lastName;
         this.registration = registration;
         this.qualifications = qualifications;
-        this.appointments = new ArrayList<>();
+        this.doctorAppointments = new ArrayList<>();
     }
 
     public DoctorEntity(Long doctorId, String firstName, String lastName, String registration, String qualifications) 
@@ -49,7 +49,7 @@ public class DoctorEntity implements Serializable
         this.lastName = lastName;
         this.registration = registration;
         this.qualifications = qualifications;
-        this.appointments = new ArrayList<>();
+        this.doctorAppointments = new ArrayList<>();
     }
 
     public Long getDoctorId() 
@@ -140,11 +140,11 @@ public class DoctorEntity implements Serializable
         this.qualifications = qualifications;
     }
 
-    public List<AppointmentEntity> getAppointments() {
-        return appointments;
+    public List<AppointmentEntity> getdoctorAppointments() {
+        return doctorAppointments;
     }
 
-    public void setAppointments(List<AppointmentEntity> appointments) {
-        this.appointments = appointments;
+    public void setDoctorAppointments(List<AppointmentEntity> doctorAppointments) {
+        this.doctorAppointments = doctorAppointments;
     }
 } 

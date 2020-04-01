@@ -4,7 +4,6 @@ import ejb.session.stateless.DoctorSessionBeanLocal;
 import ejb.session.stateless.PatientSessionBeanLocal;
 import ejb.session.stateless.StaffEntitySessionBeanLocal;
 import entity.DoctorEntity;
-import entity.GenderEnum;
 import static entity.GenderEnum.F;
 import static entity.GenderEnum.M;
 import entity.PatientEntity;
