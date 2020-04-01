@@ -125,16 +125,4 @@ public class DoctorSessionBean implements DoctorSessionBeanRemote, DoctorSession
             throw new DeleteDoctorException("Doctor ID " + doctorId + " is associated with existing appointment(s) and cannot be deleted!");
         }
     }
-    
-    
-    
-    @Override
-    public void addAppointmentToDoctorRecord(Long doctorId, AppointmentEntity newAppointmentEntity) throws DoctorNotFoundException
-    {
-        DoctorEntity doctorEntity = retrieveDoctorByDoctorId(doctorId);
-        
-        List<AppointmentEntity> doctorAppointments = appointmentEntitySessionBeanLocal.retrieveAppointmentByDoctorId(doctorId);
-        doctorAppointments.add(newAppointmentEntity);
-        doctorEntity.setDoctorAppointments(doctorAppointments);
-    }
 }

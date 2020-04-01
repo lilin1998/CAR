@@ -19,6 +19,4 @@ public interface DoctorSessionBeanRemote {
     public void updateDoctor(DoctorEntity doctorEntity) throws UpdateDoctorException, DoctorNotFoundException;
     
     public void deleteDoctor(DoctorEntity doctorEntity) throws DeleteDoctorException, DoctorNotFoundException, AppointmentNotFoundException;
-    
-    public void addAppointmentToDoctorRecord(Long doctorId, AppointmentEntity newAppointmentEntity) throws DoctorNotFoundException;
 }

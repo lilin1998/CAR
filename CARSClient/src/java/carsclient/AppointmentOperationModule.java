@@ -8,6 +8,7 @@ import entity.DoctorEntity;
 import entity.PatientEntity;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
@@ -136,6 +137,8 @@ public class AppointmentOperationModule
         String date;
         DoctorEntity doctor = null;
         PatientEntity patient = null;
+        List<AppointmentEntity> patientAppointment = new ArrayList<>();
+        List<AppointmentEntity> doctorAppointment = new ArrayList<>();
         
         System.out.println("*** CARS :: Appointment Operation :: Add Appointment ***\n");
         
@@ -232,8 +235,8 @@ public class AppointmentOperationModule
         
         System.out.print("Enter Time> ");
         String timeInput = scanner.nextLine().trim();
-        timeInput += ":00";
-        Time time = Time.valueOf(timeInput);
+        String timeformat = timeInput + ":00";
+        Time time = Time.valueOf(timeformat);
         
         System.out.print("Enter Patient Identity Number> ");
         String patientIdentityNo = scanner.nextLine().trim();
@@ -248,8 +251,10 @@ public class AppointmentOperationModule
         
         AppointmentEntity newAppointmentEntity = new AppointmentEntity(doctor, actualDate, time, patient);
         appointmentEntitySessionBeanRemote.createNewAppointment(newAppointmentEntity);
-        patientSessionBeanRemote.addAppointmentToPatientRecord(patientIdentityNo, newAppointmentEntity);
-        doctorSessionBeanRemote.addAppointmentToDoctorRecord(doctor.getDoctorId(), newAppointmentEntity);
+        patientAppointment = patient.getPatientAppointments();
+        patient.setPatientAppointments(patientAppointment);
+        doctorAppointment = doctor.getdoctorAppointments();
+        doctor.setDoctorAppointments(doctorAppointment);
         
         String patientName = patient.getFirstName() + " " + patient.getLastName();
         String doctorName = doctor.getFirstName() + " " + doctor.getLastName();

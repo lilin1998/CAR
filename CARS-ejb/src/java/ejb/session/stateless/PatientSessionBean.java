@@ -141,16 +141,4 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
             throw new DeletePatientException("Patient ID " + patientId + " is associated with existing appointments and cannot be deleted!");
         }
     }
-    
-    
-    
-    @Override
-    public void addAppointmentToPatientRecord(String patientIdentityNo, AppointmentEntity newAppointmentEntity) throws PatientNotFoundException
-    {
-        PatientEntity patientEntity = retrievePatientByPatientIdentityNumber(patientIdentityNo);
-        
-        List<AppointmentEntity> patientAppointments = appointmentEntitySessionBeanLocal.retrieveAppointmentByPatientIdentityNo(patientIdentityNo);
-        patientAppointments.add(newAppointmentEntity);
-        patientEntity.setPatientAppointments(patientAppointments);
-    }
 }

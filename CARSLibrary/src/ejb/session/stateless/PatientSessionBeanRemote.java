@@ -20,6 +20,4 @@ public interface PatientSessionBeanRemote
     public void deletePatient(Long patientId) throws PatientNotFoundException, DeletePatientException;
     
     public PatientEntity retrievePatientByPatientIdentityNumber(String identityNumber) throws PatientNotFoundException;
-
-    public void addAppointmentToPatientRecord(String patientIdentityNo, AppointmentEntity newAppointmentEntity) throws PatientNotFoundException;
 }

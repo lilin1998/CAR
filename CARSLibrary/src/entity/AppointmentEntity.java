@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -19,12 +20,14 @@ public class AppointmentEntity implements Serializable
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long appointmentId;
     @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private DoctorEntity doctorEntity; //to get doctorId
     @Column(nullable = false)
     private Date date;
     @Column(nullable = false)
     private Time time;
     @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private PatientEntity patientEntity; //to get identityNumber
 
     public AppointmentEntity() 
