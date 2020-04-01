@@ -5,10 +5,13 @@ import ejb.session.stateless.DoctorSessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
 import ejb.session.stateless.StaffEntitySessionBeanRemote;
 import entity.StaffEntity;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Scanner;
 import util.exception.DoctorNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.PatientNotFoundException;
+import util.exception.UpdatePatientException;
 
 public class MainApp 
 {
@@ -43,7 +46,7 @@ public class MainApp
 
     
    
-    public void runApp() throws DoctorNotFoundException, PatientNotFoundException
+    public void runApp() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -121,7 +124,7 @@ public class MainApp
     
     
     
-    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException
+    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
