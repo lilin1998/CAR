@@ -82,6 +82,23 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
     
     
     @Override
+    public PatientEntity retrievePatientByPatientIdentityNumber(String identityNumber) throws PatientNotFoundException
+    {
+        PatientEntity patientEntity = em.find(PatientEntity.class, identityNumber);
+        
+        if (patientEntity != null)
+        {
+            return patientEntity;
+        }
+        else 
+        {
+            throw new PatientNotFoundException("Patient Identity Number " + identityNumber + " does not exist!");
+        }
+    }
+    
+    
+    
+    @Override
     public void updatePatient(PatientEntity patientEntity) throws UpdatePatientException
     {
         try

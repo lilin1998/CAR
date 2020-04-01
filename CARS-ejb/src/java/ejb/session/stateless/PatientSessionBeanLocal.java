@@ -18,4 +18,6 @@ public interface PatientSessionBeanLocal
     public void updatePatient(PatientEntity patientEntity) throws UpdatePatientException;
 
     public void deletePatient(Long patientId) throws PatientNotFoundException, DeletePatientException;
+
+    public PatientEntity retrievePatientByPatientIdentityNumber(String identityNumber) throws PatientNotFoundException;
 }
