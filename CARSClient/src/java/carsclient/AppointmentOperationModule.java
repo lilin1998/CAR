@@ -44,7 +44,7 @@ public class AppointmentOperationModule
     
     
     
-    public void appointmentOperation() throws DoctorNotFoundException, PatientNotFoundException
+    public void appointmentOperation() throws DoctorNotFoundException, PatientNotFoundException, AppointmentNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -114,14 +114,16 @@ public class AppointmentOperationModule
             else 
             {
                 System.out.println("Appointments:");
-                System.out.printf("%-5s|%-13s|%-13s|%-20s\n", "Id", "Date", "Time", "Doctor");
+                System.out.printf("%-3s|%-12s|%-7s|%-13s\n", "Id", "Date", "Time", "Doctor");
                 
                 for (AppointmentEntity appointmentEntity:patientAppointments)
                 {
                     String doctorName = appointmentEntity.getDoctorEntity().getFirstName() + " " + appointmentEntity.getDoctorEntity().getLastName();
-                    System.out.printf("%-5s|%-13s|%-13s|%-20s\n", appointmentEntity.getPatientEntity().getIdentityNumber(), appointmentEntity.getDate(), appointmentEntity.getTime(), doctorName);
+                    String timeString = appointmentEntity.getTime().toString();
+                    
+                    System.out.printf("%-3s|%-12s|%-7s|%-13s\n", appointmentEntity.getAppointmentId(), appointmentEntity.getDate(), timeString.substring(0, 5), doctorName);
                 }
-                System.out.println("");
+                System.out.println("\n");
             }
         }
         catch(PatientNotFoundException ex)
@@ -198,7 +200,7 @@ public class AppointmentOperationModule
                             {
                                 System.out.print(time + " ");
                             }
-                            System.out.println("\n");
+                            System.out.print("\n");
                         }    
                         else if (day == Calendar.THURSDAY) 
                         {
@@ -206,7 +208,7 @@ public class AppointmentOperationModule
                             {
                                 System.out.print(time + " ");
                             }
-                            System.out.println("\n");
+                            System.out.print("\n");
                         } 
                         else //Friday
                         {
@@ -214,7 +216,7 @@ public class AppointmentOperationModule
                             {
                                 System.out.print(time + " ");
                             }
-                            System.out.println("\n");
+                            System.out.print("\n");
                         }
                     }
                     else 
@@ -239,7 +241,7 @@ public class AppointmentOperationModule
                                     }
                                 }
                             }
-                            System.out.println("\n");
+                            System.out.print("\n");
                             tempList.clear();
                         } 
                         else if (day == Calendar.THURSDAY) 
@@ -254,7 +256,7 @@ public class AppointmentOperationModule
                                     }
                                 }
                             }
-                            System.out.println("\n");
+                            System.out.print("\n");
                             tempList.clear();
                         } 
                         else //Friday
@@ -269,7 +271,7 @@ public class AppointmentOperationModule
                                     }
                                 }
                             }
-                            System.out.println("\n");
+                            System.out.print("\n");
                             tempList.clear();
                         }   
                     }
@@ -315,8 +317,57 @@ public class AppointmentOperationModule
     
     
     
-    private void cancelExistingAppointment()
+    private void cancelExistingAppointment() throws DoctorNotFoundException, AppointmentNotFoundException
     {
+        Scanner scanner = new Scanner(System.in);
         
+        System.out.println("*** CARS :: Appointment Operation :: Cancel Appointment ***\n");
+        System.out.print("Enter Patient Identity Number> ");
+        String patientIdentityNo = scanner.nextLine().trim();
+        System.out.print("\n");
+        
+        try
+        { 
+            List<AppointmentEntity> patientAppointments = appointmentEntitySessionBeanRemote.retrieveAppointmentByPatientIdentityNo(patientIdentityNo);
+            if (patientAppointments.isEmpty())
+            {
+                System.out.println("Patient has no upcoming appointments!\n");
+            }
+            else 
+            {
+                System.out.println("Appointments:");
+                System.out.printf("%-3s|%-12s|%-7s|%-13s\n", "Id", "Date", "Time", "Doctor");
+                
+                for (AppointmentEntity appointmentEntity:patientAppointments)
+                {
+                    String doctorName = appointmentEntity.getDoctorEntity().getFirstName() + " " + appointmentEntity.getDoctorEntity().getLastName();
+                    String timeString = appointmentEntity.getTime().toString();
+                    
+                    System.out.printf("%-3s|%-12s|%-7s|%-13s\n", appointmentEntity.getAppointmentId(), appointmentEntity.getDate(), timeString.substring(0, 5), doctorName);
+                }
+                System.out.print("\n");
+            }
+            
+            System.out.print("Enter Appointment Id> ");
+            Long appointmentId = scanner.nextLong();
+           
+            AppointmentEntity appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByAppointmentId(appointmentId);
+            DoctorEntity doctorEntity = appointmentEntity.getDoctorEntity();
+            String doctorName = doctorEntity.getFirstName() + " " + doctorEntity.getLastName();
+            String timeString = appointmentEntity.getTime().toString();
+            String dateString = appointmentEntity.getDate().toString();
+            String patientName = appointmentEntity.getPatientEntity().getFirstName() + " " + appointmentEntity.getPatientEntity().getLastName();
+            
+            //remove appointment from database
+            appointmentEntitySessionBeanRemote.deleteAppointment(appointmentId);
+            doctorSessionBeanRemote.updateDoctorList(doctorEntity.getDoctorId());
+            patientSessionBeanRemote.updatePatientList(patientIdentityNo);
+            
+            System.out.println(patientName + " appointment with " + doctorName + " at " + timeString.substring(0, 5) + " on " + dateString + " has been cancelled.\n");
+        }
+        catch(PatientNotFoundException ex)
+        {
+              System.out.println("Failed to retrieve list of appointments!\n");
+        }
     }
 }

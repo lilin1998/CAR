@@ -11,12 +11,9 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Scanner;
-import util.exception.AppointmentNotFoundException;
 import util.exception.DeletePatientException;
-import util.exception.DoctorNotFoundException;
 import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
-import util.exception.StaffNotFoundException;
 import util.exception.UpdatePatientException;
 
 public class AdministrationOperationModule 

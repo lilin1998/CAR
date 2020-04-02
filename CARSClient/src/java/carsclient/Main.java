@@ -7,6 +7,7 @@ import ejb.session.stateless.StaffEntitySessionBeanRemote;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import javax.ejb.EJB;
+import util.exception.AppointmentNotFoundException;
 import util.exception.DeletePatientException;
 import util.exception.DoctorNotFoundException;
 import util.exception.PasswordException;
@@ -24,7 +25,7 @@ public class Main
     @EJB
     private static AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
     
-    public static void main(String[] args) throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException 
+    public static void main(String[] args) throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException 
     {
         MainApp mainApp = new MainApp(staffEntitySessionBeanRemote, doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote);
         mainApp.runApp();
