@@ -176,6 +176,8 @@ public class AppointmentOperationModule
         try
         {
             doctor = doctorSessionBeanRemote.retrieveDoctorByDoctorId(doctorId);
+            //check if doctor is on leave
+            
             try 
             {
                 //check that appointment is not on a weekend
@@ -229,6 +231,35 @@ public class AppointmentOperationModule
                                 tempList.add(unavailableTime.substring(0, 5));
                             }
                         }
+                        if (tempList.isEmpty())
+                        {
+                            if (day >= Calendar.MONDAY && day <= Calendar.WEDNESDAY) 
+                            {
+                                for (int i = 0; i < timeSlot.length; i++)
+                                {
+                                    System.out.print(timeSlot[i] + " ");
+                                }
+                                System.out.print("\n");
+                            }
+                             else if (day == Calendar.THURSDAY) 
+                            {
+                                for (int i = 0; i < timeSlotThur.length; i++)
+                                {
+                                    System.out.print(timeSlotThur[i] + " ");
+                                }
+                                System.out.print("\n");
+                            }
+                            else //Friday
+                            {
+                                for (int i = 0; i < timeSlotFri.length; i++)
+                                {
+                                    System.out.print(timeSlotFri[i] + " ");
+                                }
+                                System.out.print("\n");
+                            }
+                        }
+                        else
+                        {
                         if (day >= Calendar.MONDAY && day <= Calendar.WEDNESDAY) 
                         {
                             for (int i = 0; i < timeSlot.length; i++)
@@ -273,7 +304,8 @@ public class AppointmentOperationModule
                             }
                             System.out.print("\n");
                             tempList.clear();
-                        }   
+                        }
+                        }
                     }
                     
                     System.out.print("Enter Time> ");

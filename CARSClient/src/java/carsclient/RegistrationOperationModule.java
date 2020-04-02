@@ -3,16 +3,21 @@ package carsclient;
 import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.DoctorSessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
+import entity.AppointmentEntity;
+import entity.DoctorEntity;
 import entity.GenderEnum;
-import static entity.GenderEnum.F;
-import static entity.GenderEnum.M;
 import entity.PatientEntity;
 import entity.StaffEntity;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Scanner;
+import util.exception.DoctorNotFoundException;
 import util.exception.PasswordException;
 
 public class RegistrationOperationModule {
@@ -22,6 +27,10 @@ public class RegistrationOperationModule {
     
     private StaffEntity currentStaffEntity;
 
+    private String[] timeSlot = {"08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"};
+    private String[] timeSlotThur = {"08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"};
+    private String[] timeSlotFri = {"08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00"};
+    
     public RegistrationOperationModule() {
     }
 
@@ -36,7 +45,7 @@ public class RegistrationOperationModule {
     
     
     
-    public void registrationOperation() throws NoSuchAlgorithmException, NoSuchProviderException, PasswordException
+    public void registrationOperation() throws NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DoctorNotFoundException
     {
         
         Scanner scanner = new Scanner(System.in);
@@ -93,7 +102,7 @@ public class RegistrationOperationModule {
         Scanner scanner = new Scanner(System.in);
         PatientEntity newPatientEntity = new PatientEntity();
         
-        System.out.println("*** CARS :: Administration Operation :: Add New Patient ***\n");
+        System.out.println("*** CARS :: Registration Operation :: Add New Patient ***\n");
         System.out.print("Enter Identity Number> ");
         newPatientEntity.setIdentityNumber(scanner.nextLine().trim());
         System.out.print("Enter Password> ");
@@ -176,9 +185,102 @@ public class RegistrationOperationModule {
     }
     
     
-    private void registerWalkinConsultation()
-    {
     
+    private void registerWalkinConsultation() throws DoctorNotFoundException
+    {
+        Scanner scanner = new Scanner(System.in);
+       
+        System.out.println("*** CARS :: Registration Operation :: Register Walk-In Consultation ***\n");
+        
+        //retrieve today's date and current time
+        Long today = System.currentTimeMillis();
+        java.sql.Date dateToday = new java.sql.Date(today);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dateToday);
+        int day = cal.get(Calendar.DAY_OF_WEEK);
+        java.sql.Time timeNow = new java.sql.Time(today);
+        
+        //check if doctor on leave
+        
+        List<DoctorEntity> doctors = doctorSessionBeanRemote.retrieveAllDoctors();
+        System.out.println("Doctor:");
+        System.out.printf("%-3s|%-20s\n", "Id", "Name");
+        
+        for (DoctorEntity doctorEntity : doctors)
+        {
+            String doctorName = doctorEntity.getFirstName() + " " + doctorEntity.getLastName();
+            System.out.printf("%-3s|%-20s\n", doctorEntity.getDoctorId(), doctorName);
+        }
+        System.out.println("");
+        
+        //retrieve latest display time
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.HOUR_OF_DAY, 3);
+        Time threeHoursLater = new Time((c.getTime()).getTime());
+        
+        List<String> availableTimeList = new ArrayList<>();
+        if (day >= Calendar.MONDAY && day <= Calendar.WEDNESDAY) 
+        {
+            for (String time : timeSlot) 
+            {
+                time += ":00";
+                if (Time.valueOf(time).compareTo(threeHoursLater) <= 0)
+                {
+                    availableTimeList.add(time);
+                }
+            }   
+        }    
+        else if (day == Calendar.THURSDAY) 
+        {
+            for (String time : timeSlotThur) 
+            {
+                time += ":00";
+                if (Time.valueOf(time).compareTo(threeHoursLater) <= 0)
+                {
+                    availableTimeList.add(time);
+                }
+            }
+        } 
+        else //Friday
+        {
+            for (String time : timeSlotFri) 
+            {time += ":00";
+                if (Time.valueOf(time).compareTo(threeHoursLater) <= 0)
+                {
+                    availableTimeList.add(time);
+                }    
+            }       
+        }
+        
+        System.out.println("Availability:");
+        System.out.printf("%-7s|", "Time");
+        for(DoctorEntity doctorEntity : doctors)
+        {
+            System.out.printf("%-3s|", doctorEntity.getDoctorId());
+        }
+        System.out.print("\n");
+        
+        for (int i = 0; i < availableTimeList.size(); i++)
+        {
+            System.out.printf("%-7s|", availableTimeList.get(i).substring(0, 5));
+            for (DoctorEntity doctorEntity : doctors)
+            {
+                List<AppointmentEntity> doctorappointment = appointmentEntitySessionBeanRemote.retrieveAppointmentByDoctorId(doctorEntity.getDoctorId());
+                for (int j = 0; j < doctorappointment.size(); j++)
+                {
+                    String appointmentTime = doctorappointment.get(j).getTime().toString();
+                    if (appointmentTime.substring(0, 5).equals(availableTimeList.get(i)))
+                    {
+                        System.out.printf("%-3s|", "X");
+                    }
+                    if (!appointmentTime.substring(0, 5).equals(availableTimeList.get(i)) && j == doctorappointment.size() - 1)
+                    {
+                        System.out.printf("%-3s|", "O");
+                    }
+                }
+            }
+            System.out.print("\n");
+        }
     }
 
     
