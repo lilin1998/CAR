@@ -13,7 +13,9 @@ import util.exception.DoctorNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
+import util.exception.StaffNotFoundException;
 import util.exception.UpdatePatientException;
+import util.exception.UpdateStaffException;
 
 public class MainApp 
 {
@@ -48,7 +50,7 @@ public class MainApp
 
     
    
-    public void runApp() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException
+    public void runApp() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, StaffNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -126,7 +128,7 @@ public class MainApp
     
     
     
-    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException
+    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, StaffNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;

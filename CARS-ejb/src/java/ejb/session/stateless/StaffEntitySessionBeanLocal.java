@@ -4,6 +4,7 @@ import entity.StaffEntity;
 import java.util.List;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.StaffNotFoundException;
+import util.exception.UpdateStaffException;
 
 public interface StaffEntitySessionBeanLocal {
     
