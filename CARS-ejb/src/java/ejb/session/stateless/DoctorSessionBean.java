@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.AppointmentEntity;
 import entity.DoctorEntity;
+import java.sql.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +18,7 @@ import javax.persistence.Query;
 import util.exception.AppointmentNotFoundException;
 import util.exception.DeleteDoctorException;
 import util.exception.DoctorNotFoundException;
+import util.exception.LeaveApplicationException;
 import util.exception.UpdateDoctorException;
 
 @Stateless
@@ -128,7 +130,18 @@ public class DoctorSessionBean implements DoctorSessionBeanRemote, DoctorSession
         }
     }
     
-    
+    @Override
+    public void checkAppointmentSchedule(Long doctorId, Date date) throws LeaveApplicationException, DoctorNotFoundException
+    {
+        List<AppointmentEntity> appointmentEntitys = appointmentEntitySessionBeanLocal.retrieveAppointmentByDoctorId(doctorId);
+        
+        for(AppointmentEntity appointmentEntity : appointmentEntitys)
+        {
+            if (appointmentEntity.getDate().equals(date)) {
+                throw new LeaveApplicationException("There is an appointment scheduled on the leave date!\n");
+            }
+        }          
+    }
     
     @Override
     public void updateDoctorList(Long doctorId) throws DoctorNotFoundException

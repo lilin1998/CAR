@@ -1,10 +1,12 @@
 package ejb.session.stateless;
 
 import entity.DoctorEntity;
+import java.sql.Date;
 import java.util.List;
 import util.exception.AppointmentNotFoundException;
 import util.exception.DeleteDoctorException;
 import util.exception.DoctorNotFoundException;
+import util.exception.LeaveApplicationException;
 import util.exception.UpdateDoctorException;
 
 public interface DoctorSessionBeanRemote {
@@ -20,4 +22,7 @@ public interface DoctorSessionBeanRemote {
     public void deleteDoctor(DoctorEntity doctorEntity) throws DeleteDoctorException, DoctorNotFoundException, AppointmentNotFoundException;
 
     public void updateDoctorList(Long doctorId) throws DoctorNotFoundException;
+
+    public void checkAppointmentSchedule(Long doctorId, Date date) throws LeaveApplicationException, DoctorNotFoundException;
+    
 }

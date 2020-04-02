@@ -1,22 +1,29 @@
 package carsclient;
 
 import ejb.session.stateless.DoctorSessionBeanRemote;
+import ejb.session.stateless.LeaveEntitySessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
 import ejb.session.stateless.StaffEntitySessionBeanRemote;
+import entity.AppointmentEntity;
 import entity.DoctorEntity;
 import entity.GenderEnum;
+import entity.LeaveEntity;
 import entity.PatientEntity;
 import entity.StaffEntity;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
+import java.sql.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
 import util.exception.AppointmentNotFoundException;
+import util.exception.CreateAppointmentException;
 import util.exception.DeleteDoctorException;
 import util.exception.DeletePatientException;
 import util.exception.DoctorNotFoundException;
+import util.exception.LeaveApplicationException;
 import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
 import util.exception.StaffNotFoundException;
@@ -28,20 +35,22 @@ public class AdministrationOperationModule
     private DoctorSessionBeanRemote doctorSessionBeanRemote;
     private PatientSessionBeanRemote patientSessionBeanRemote;
     private StaffEntitySessionBeanRemote staffEntitySessionBeanRemote;
+    private LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote;
 
     public AdministrationOperationModule() 
     {
     }
 
-    public AdministrationOperationModule(DoctorSessionBeanRemote doctorSessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, StaffEntitySessionBeanRemote staffEntitySessionBeanRemote) 
+    public AdministrationOperationModule(DoctorSessionBeanRemote doctorSessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, StaffEntitySessionBeanRemote staffEntitySessionBeanRemote, LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote) 
     {
         this();
         this.doctorSessionBeanRemote = doctorSessionBeanRemote;
         this.patientSessionBeanRemote = patientSessionBeanRemote;
         this.staffEntitySessionBeanRemote = staffEntitySessionBeanRemote;
+        this.leaveEntitySessionBeanRemote = leaveEntitySessionBeanRemote;
     }
     
-    public void administrationOperation() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, StaffNotFoundException, AppointmentNotFoundException, DoctorNotFoundException
+    public void administrationOperation() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, StaffNotFoundException, AppointmentNotFoundException, DoctorNotFoundException, LeaveApplicationException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -404,7 +413,7 @@ public class AdministrationOperationModule
         scanner.nextLine();
     }
     
-        private void doctorManagement() throws AppointmentNotFoundException, DoctorNotFoundException
+        private void doctorManagement() throws AppointmentNotFoundException, DoctorNotFoundException, LeaveApplicationException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -417,11 +426,12 @@ public class AdministrationOperationModule
             System.out.println("3: Update Doctor");
             System.out.println("4: Delete Doctor");
             System.out.println("5: View All Doctor");
-            System.out.println("6: Back\n");
+            System.out.println("6: Leave Management");
+            System.out.println("7: Back\n");
 
             response = 0;
             
-            while(response < 1 || response > 6)
+            while(response < 1 || response > 7)
             {
                 System.out.print("> ");
 
@@ -449,6 +459,10 @@ public class AdministrationOperationModule
                 }
                 else if(response == 6)
                 {
+                    leaveManagement();
+                }
+                else if(response == 7)
+                {
                     break;
                 }
                 else
@@ -457,7 +471,7 @@ public class AdministrationOperationModule
                 }
             }
             
-            if(response == 6)
+            if(response == 7)
             {
                 break;
             }
@@ -611,6 +625,52 @@ public class AdministrationOperationModule
         
         System.out.print("Press any key to continue...> ");
         scanner.nextLine();
+    }
+    
+    private void leaveManagement() throws LeaveApplicationException
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Doctor ID> ");
+        Long doctorId = scanner.nextLong();
+        scanner.nextLine();
+        System.out.print("Enter Date> ");
+        String date = scanner.nextLine();
+
+        Date appliedLeaveDate = Date.valueOf(date);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(appliedLeaveDate);
+        int day = cal.get(Calendar.DAY_OF_WEEK);
+
+        //set a week in advance rule
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH, 7);
+        Date aWeekAdvance = new Date((c.getTime()).getTime());      
+        
+        try //check if doctor exist
+        {
+            DoctorEntity doctorEntity = doctorSessionBeanRemote.retrieveDoctorByDoctorId(doctorId);
+            try // check if applied date is valid
+            {
+                if(appliedLeaveDate.compareTo(aWeekAdvance) < 0) // check if date is applied a week in advance
+                {
+                    throw new LeaveApplicationException("Leave date applied must be at least a week in advance!\n");
+            
+                }
+                leaveEntitySessionBeanRemote.checkIfDoctorAppliedInSameWeek(doctorId, appliedLeaveDate);
+                doctorSessionBeanRemote.checkAppointmentSchedule(doctorId, appliedLeaveDate); // check if doc has appt on applied day
+                leaveEntitySessionBeanRemote.createNewLeave(new LeaveEntity(doctorEntity, appliedLeaveDate));
+                System.out.println("Leave date applied was successful!\n");
+
+            }
+            catch (LeaveApplicationException ex) 
+            {
+                System.out.println("There was an error applying for leave: " + ex.getMessage());
+            }   
+        }    
+        catch (DoctorNotFoundException ex)
+        {
+            System.out.println("Doctor does not exist!\n");
+        } 
     }
     
     private void staffManagement() throws StaffNotFoundException

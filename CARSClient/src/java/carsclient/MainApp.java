@@ -2,6 +2,7 @@ package carsclient;
 
 import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.DoctorSessionBeanRemote;
+import ejb.session.stateless.LeaveEntitySessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
 import ejb.session.stateless.StaffEntitySessionBeanRemote;
 import entity.StaffEntity;
@@ -12,6 +13,7 @@ import util.exception.AppointmentNotFoundException;
 import util.exception.DeletePatientException;
 import util.exception.DoctorNotFoundException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.LeaveApplicationException;
 import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
 import util.exception.StaffNotFoundException;
@@ -24,6 +26,7 @@ public class MainApp
     private DoctorSessionBeanRemote doctorSessionBeanRemote;
     private PatientSessionBeanRemote patientSessionBeanRemote;
     private AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
+    private LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote;
     
     private RegistrationOperationModule registrationOperationModule;
     private AppointmentOperationModule appointmentOperationModule;
@@ -39,7 +42,7 @@ public class MainApp
 
     
     
-    public MainApp(StaffEntitySessionBeanRemote staffEntitySessionBeanRemote, DoctorSessionBeanRemote doctorSessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote) 
+    public MainApp(StaffEntitySessionBeanRemote staffEntitySessionBeanRemote, DoctorSessionBeanRemote doctorSessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote) 
     {
         this();
         
@@ -47,12 +50,13 @@ public class MainApp
         this.doctorSessionBeanRemote = doctorSessionBeanRemote;
         this.patientSessionBeanRemote = patientSessionBeanRemote;
         this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
+        this.leaveEntitySessionBeanRemote = leaveEntitySessionBeanRemote;
     }
 
     
    
     
-    public void runApp() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException
+    public void runApp() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -79,7 +83,7 @@ public class MainApp
                         
                         registrationOperationModule = new RegistrationOperationModule(doctorSessionBeanRemote, appointmentEntitySessionBeanRemote, patientSessionBeanRemote, currentStaffEntity);
                         appointmentOperationModule = new AppointmentOperationModule(doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote);
-                        administrationOperationModule = new AdministrationOperationModule(doctorSessionBeanRemote, patientSessionBeanRemote, staffEntitySessionBeanRemote);
+                        administrationOperationModule = new AdministrationOperationModule(doctorSessionBeanRemote, patientSessionBeanRemote, staffEntitySessionBeanRemote, leaveEntitySessionBeanRemote);
                         menuMain();
                     }
                     catch(InvalidLoginCredentialException ex) 
@@ -130,7 +134,7 @@ public class MainApp
     
     
     
-    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException
+    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
