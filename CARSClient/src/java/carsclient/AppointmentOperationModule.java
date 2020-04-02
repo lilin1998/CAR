@@ -123,7 +123,7 @@ public class AppointmentOperationModule
                     
                     System.out.printf("%-3s|%-12s|%-7s|%-13s\n", appointmentEntity.getAppointmentId(), appointmentEntity.getDate(), timeString.substring(0, 5), doctorName);
                 }
-                System.out.println("\n");
+                System.out.print("\n");
             }
         }
         catch(PatientNotFoundException ex)

@@ -160,6 +160,8 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
         patientEntity.setPatientAppointments(patientAppointment);
     }
     
+    
+    
     @Override
     public void checkPassword(String password) throws PasswordException
     {

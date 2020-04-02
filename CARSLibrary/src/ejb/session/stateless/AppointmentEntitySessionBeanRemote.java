@@ -20,5 +20,5 @@ public interface AppointmentEntitySessionBeanRemote {
     
     public void updateAppointment(AppointmentEntity appointmentEntity);
 
-    public void deleteAppoinment(Long appointmentId);    
+    public void deleteAppointment(Long appointmentId);  
 }

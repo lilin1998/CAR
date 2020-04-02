@@ -95,7 +95,7 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     
     
     @Override
-    public void deleteAppoinment(Long appointmentId)
+    public void deleteAppointment(Long appointmentId)
     {
         AppointmentEntity appointmentToRemove;
         

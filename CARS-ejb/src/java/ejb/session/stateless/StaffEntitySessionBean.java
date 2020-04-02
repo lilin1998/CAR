@@ -14,6 +14,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.StaffNotFoundException;
+import util.exception.UpdateStaffException;
 
 @Stateless
 @Local(StaffEntitySessionBeanLocal.class)
@@ -125,7 +126,6 @@ public class StaffEntitySessionBean implements StaffEntitySessionBeanRemote, Sta
     @Override
     public void updateStaffEntity(StaffEntity staffEntity)
     {
-        em.merge(staffEntity);
         try 
         {
             StaffEntity s = retrieveStaffEntityByStaffId(staffEntity.getStaffId());
@@ -133,7 +133,8 @@ public class StaffEntitySessionBean implements StaffEntitySessionBeanRemote, Sta
             s.setLastName(staffEntity.getLastName());
             s.setPassword(staffEntity.getPassword());
             s.setUsername(staffEntity.getUsername());
-        } catch (Exception e) {
+
+        } catch (StaffNotFoundException e) {
             Logger.getLogger(StaffEntitySessionBean.class.getName()).log(Level.SEVERE, null, e);
         }
     }

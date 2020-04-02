@@ -16,7 +16,7 @@ public interface DoctorSessionBeanLocal {
     public List<DoctorEntity> retrieveAllDoctors();
 
     public DoctorEntity retrieveDoctorByDoctorId(Long doctorId) throws DoctorNotFoundException;
-  
+    
     public void updateDoctor(DoctorEntity doctorEntity) throws UpdateDoctorException, DoctorNotFoundException;
 
     public void deleteDoctor(DoctorEntity doctorEntity) throws DeleteDoctorException, DoctorNotFoundException, AppointmentNotFoundException;
