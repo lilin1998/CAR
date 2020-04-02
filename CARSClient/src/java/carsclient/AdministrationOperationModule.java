@@ -37,7 +37,7 @@ public class AdministrationOperationModule
         this.staffEntitySessionBeanRemote = staffEntitySessionBeanRemote;
     }
     
-    public void administrationOperation() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException
+    public void administrationOperation() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -86,7 +86,7 @@ public class AdministrationOperationModule
         }
     }
     
-    private void patientManagement() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException
+    private void patientManagement() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException
     {
     
         Scanner scanner = new Scanner(System.in);
@@ -120,11 +120,11 @@ public class AdministrationOperationModule
                 }
                 else if(response == 3)
                 {
-//                    updatePatient();
+                    updatePatient();
                 }
                 else if(response == 4)
                 {
-//                    deletePatient();
+                    deletePatient();
                 }
                 else if(response == 5)
                 {
@@ -259,24 +259,15 @@ public class AdministrationOperationModule
     private void updatePatient() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException
     {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter Patient ID to update details of the patient> ");
-        Long patientId = scanner.nextLong();
+        System.out.print("Enter Patient Identity Number to update details of the patient> ");
+        String patientIdentityNo = scanner.nextLine().trim();
         System.out.println("");
-        PatientEntity patientEntity = patientSessionBeanRemote.retrievePatientByPatientId(patientId);
+        PatientEntity patientEntity = patientSessionBeanRemote.retrievePatientByPatientIdentityNumber(patientIdentityNo);
         String input;
         Integer integerInput;
         
         System.out.println("*** CARS :: Administration Operation :: Update Patient ***\n");
-        
-        scanner.nextLine();
-        
-        System.out.print("Enter Identity Number (blank if no change)> ");
-        input = scanner.nextLine().trim();
-        if(input.length() > 0)
-        {
-            patientEntity.setIdentityNumber(input);
-        }
-        
+                
         System.out.print("Enter Password (blank if no change)> ");
         input = scanner.nextLine().trim();
         if(input.length() > 0)
@@ -357,6 +348,8 @@ public class AdministrationOperationModule
         Long patientId = scanner.nextLong();
 
         String input;
+        
+        scanner.nextLine();
 
         try 
         {

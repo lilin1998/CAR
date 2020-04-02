@@ -8,6 +8,7 @@ import entity.StaffEntity;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Scanner;
+import util.exception.DeletePatientException;
 import util.exception.DoctorNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.PasswordException;
@@ -47,7 +48,7 @@ public class MainApp
 
     
    
-    public void runApp() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException
+    public void runApp() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -125,7 +126,7 @@ public class MainApp
     
     
     
-    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException
+    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;

@@ -113,6 +113,11 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
                 p.setFirstName(patientEntity.getFirstName());
                 p.setLastName(patientEntity.getLastName());
                 p.setAge(patientEntity.getAge());
+                p.setPassword(patientEntity.getPassword());
+                p.setGender(patientEntity.getGender());
+                p.setAge(patientEntity.getAge());
+                p.setPhone(patientEntity.getPhone());
+                p.setAddress(patientEntity.getAddress());
             }
             else {
                 throw new UpdatePatientException("Identity Number provided does not match the existing patient record!");
