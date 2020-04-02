@@ -13,7 +13,7 @@ public interface LeaveEntitySessionBeanRemote {
     
     public List<LeaveEntity> retrieveLeaveByDoctorId(Long doctorId) throws DoctorNotFoundException;
     
-    public List<LeaveEntity> retrieveLeaveByDateNDoctorId(Long doctorId, Date date);
+    public LeaveEntity retrieveLeaveByDateNDoctorId(Long doctorId, Date date);
 
     public void checkIfDoctorAppliedInSameWeek(Long doctorId, Date date) throws DoctorNotFoundException, LeaveApplicationException;
 }

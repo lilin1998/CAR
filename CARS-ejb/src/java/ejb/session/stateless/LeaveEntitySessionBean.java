@@ -9,6 +9,8 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.DoctorNotFoundException;
@@ -54,13 +56,20 @@ public class LeaveEntitySessionBean implements LeaveEntitySessionBeanRemote, Lea
     
     
     @Override
-    public List<LeaveEntity> retrieveLeaveByDateNDoctorId(Long doctorId, Date date)
+    public LeaveEntity retrieveLeaveByDateNDoctorId(Long doctorId, Date date)
     {
         Query query = em.createQuery("SELECT DISTINCT a FROM LeaveEntity a JOIN a.doctorEntity d WHERE d.doctorId = :id AND a.date = :date");
         query.setParameter("id", doctorId);
         query.setParameter("date", date);
-        
-        return query.getResultList();
+
+        try 
+        {
+            return (LeaveEntity)query.getSingleResult();
+        } 
+        catch (NoResultException | NonUniqueResultException ex) 
+        {
+            return null;
+        }
     }
     
     
@@ -96,8 +105,8 @@ public class LeaveEntitySessionBean implements LeaveEntitySessionBeanRemote, Lea
         {
             c.add(Calendar.DATE, i);  // number of days to add
             Date checkDate = new Date((c.getTime()).getTime());
-            List<LeaveEntity> list = retrieveLeaveByDateNDoctorId(doctorId, checkDate);
-            if (!list.isEmpty()) {
+            LeaveEntity leaveEntity = retrieveLeaveByDateNDoctorId(doctorId, checkDate);
+            if (leaveEntity != null) {
                 throw new LeaveApplicationException("Leave has already been applied during the same week!");
             }
         }       
