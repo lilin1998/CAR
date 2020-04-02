@@ -77,6 +77,17 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     
     
     @Override
+    public List<AppointmentEntity> retrieveAppointmentByPatientIdentityNoAndDate(String identityNo, Date date)
+    {
+        Query query = em.createQuery("SELECT DISTINCT a FROM AppointmentEntity a JOIN a.patientEntity p WHERE p.identityNumber = :id AND a.date = :date");
+        query.setParameter("id", identityNo);
+        query.setParameter("date", date);
+
+        return query.getResultList();
+    }
+    
+    
+    @Override
     public List<AppointmentEntity> retrieveAppointmentByDoctorId(Long doctorId) throws DoctorNotFoundException
     {
         Query query = em.createQuery("SELECT DISTINCT a FROM AppointmentEntity a JOIN a.doctorEntity d WHERE d.doctorId = :id");

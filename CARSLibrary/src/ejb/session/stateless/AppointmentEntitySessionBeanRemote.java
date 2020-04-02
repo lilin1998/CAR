@@ -24,4 +24,7 @@ public interface AppointmentEntitySessionBeanRemote {
     public void updateAppointment(AppointmentEntity appointmentEntity);
 
     public void deleteAppointment(Long appointmentId);  
+    
+    public List<AppointmentEntity> retrieveAppointmentByPatientIdentityNoAndDate(String identityNo, Date date);
+
 }

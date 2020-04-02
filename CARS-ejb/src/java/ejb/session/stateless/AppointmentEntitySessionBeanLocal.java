@@ -27,7 +27,8 @@ public interface AppointmentEntitySessionBeanLocal
 
     public void deleteAppointment(Long appointmentId);
 
-    
+    public List<AppointmentEntity> retrieveAppointmentByPatientIdentityNoAndDate(String identityNo, Date date);
+   
 }
 
     
