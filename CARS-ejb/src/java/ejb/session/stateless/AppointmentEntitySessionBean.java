@@ -1,6 +1,7 @@
 package ejb.session.stateless;
 
 import entity.AppointmentEntity;
+import java.sql.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -80,6 +81,18 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
     {
         Query query = em.createQuery("SELECT DISTINCT a FROM AppointmentEntity a JOIN a.doctorEntity d WHERE d.doctorId = :id");
         query.setParameter("id", doctorId);
+        
+        return query.getResultList();
+    }
+    
+    
+    
+    @Override
+    public List<AppointmentEntity> retrieveAppointmentByDoctorIdAndDate(Long doctorId, Date date) throws DoctorNotFoundException
+    {
+        Query query = em.createQuery("SELECT DISTINCT a FROM AppointmentEntity a JOIN a.doctorEntity d WHERE d.doctorId = :id AND a.date = :date ORDER BY a.time ASC");
+        query.setParameter("id", doctorId);
+        query.setParameter("date", date);
         
         return query.getResultList();
     }

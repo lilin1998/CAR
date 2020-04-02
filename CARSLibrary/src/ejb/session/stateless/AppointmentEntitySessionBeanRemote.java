@@ -1,6 +1,7 @@
 package ejb.session.stateless;
 
 import entity.AppointmentEntity;
+import java.sql.Date;
 import java.util.List;
 import util.exception.AppointmentNotFoundException;
 import util.exception.DoctorNotFoundException;
@@ -17,6 +18,8 @@ public interface AppointmentEntitySessionBeanRemote {
     public List<AppointmentEntity> retrieveAppointmentByPatientIdentityNo(String identityNo) throws PatientNotFoundException;
     
     public List<AppointmentEntity> retrieveAppointmentByDoctorId(Long doctorId) throws DoctorNotFoundException;
+    
+    public List<AppointmentEntity> retrieveAppointmentByDoctorIdAndDate(Long doctorId, Date date) throws DoctorNotFoundException;
     
     public void updateAppointment(AppointmentEntity appointmentEntity);
 

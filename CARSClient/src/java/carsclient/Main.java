@@ -9,6 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import javax.ejb.EJB;
 import util.exception.AppointmentNotFoundException;
+import util.exception.CreateAppointmentException;
 import util.exception.DeletePatientException;
 import util.exception.DoctorNotFoundException;
 import util.exception.LeaveApplicationException;
@@ -30,7 +31,7 @@ public class Main
     @EJB
     private static LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote;
     
-    public static void main(String[] args) throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException  
+    public static void main(String[] args) throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException, CreateAppointmentException  
     {
         MainApp mainApp = new MainApp(staffEntitySessionBeanRemote, doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote, leaveEntitySessionBeanRemote);
         mainApp.runApp();

@@ -260,13 +260,13 @@ public class AppointmentOperationModule
                         }
                         else
                         {
-                        if (day >= Calendar.MONDAY && day <= Calendar.WEDNESDAY) 
-                        {
-                            for (int i = 0; i < timeSlot.length; i++)
+                            if (day >= Calendar.MONDAY && day <= Calendar.WEDNESDAY) 
                             {
-                                for (int j = 0; j < tempList.size(); j++)
+                                for (int i = 0; i < timeSlot.length; i++)
                                 {
-                                    if (!timeSlot[i].equals(tempList.get(j)) && j == tempList.size() - 1)
+                                    for (int j = 0; j < tempList.size(); j++)
+                                    {
+                                        if (!timeSlot[i].equals(tempList.get(j)) && j == tempList.size() - 1)
                                     {
                                         System.out.print(timeSlot[i] + " ");
                                     }

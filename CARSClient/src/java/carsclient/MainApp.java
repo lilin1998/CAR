@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Scanner;
 import util.exception.AppointmentNotFoundException;
+import util.exception.CreateAppointmentException;
 import util.exception.DeletePatientException;
 import util.exception.DoctorNotFoundException;
 import util.exception.InvalidLoginCredentialException;
@@ -55,7 +56,7 @@ public class MainApp
     
    
     
-    public void runApp() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException
+    public void runApp() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException, CreateAppointmentException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -133,7 +134,7 @@ public class MainApp
     
     
     
-    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException
+    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException, CreateAppointmentException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
