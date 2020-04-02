@@ -3,6 +3,7 @@ package carsclient;
 import ejb.session.stateless.DoctorSessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
 import ejb.session.stateless.StaffEntitySessionBeanRemote;
+import entity.DoctorEntity;
 import entity.GenderEnum;
 import entity.PatientEntity;
 import entity.StaffEntity;
@@ -12,10 +13,14 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Scanner;
+import util.exception.AppointmentNotFoundException;
+import util.exception.DeleteDoctorException;
 import util.exception.DeletePatientException;
+import util.exception.DoctorNotFoundException;
 import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
 import util.exception.StaffNotFoundException;
+import util.exception.UpdateDoctorException;
 import util.exception.UpdatePatientException;
 
 public class AdministrationOperationModule 
@@ -36,7 +41,7 @@ public class AdministrationOperationModule
         this.staffEntitySessionBeanRemote = staffEntitySessionBeanRemote;
     }
     
-    public void administrationOperation() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, StaffNotFoundException
+    public void administrationOperation() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, StaffNotFoundException, AppointmentNotFoundException, DoctorNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -62,7 +67,7 @@ public class AdministrationOperationModule
                 }
                 else if(response == 2)
                 {
-//                    doctorManagement();
+                    doctorManagement();
                 }
                 else if(response == 3)
                 {
@@ -399,210 +404,214 @@ public class AdministrationOperationModule
         scanner.nextLine();
     }
     
-    //    private void doctorManagement() throws AppointmentNotFoundException, DoctorNotFoundException
-//    {
-//        Scanner scanner = new Scanner(System.in);
-//        Integer response = 0;
-//        
-//        while(true)
-//        {
-//            System.out.println("*** CARS :: Administration Operation :: Doctor Management ***\n");
-//            System.out.println("1: Add Doctor");
-//            System.out.println("2: View Doctor Details");
-//            System.out.println("3: Update Doctor");
-//            System.out.println("4: Delete Doctor");
-//            System.out.println("5: View All Doctor");
-//            System.out.println("6: Back\n");
-//
-//            response = 0;
-//            
-//            while(response < 1 || response > 6)
-//            {
-//                System.out.print("> ");
-//
-//                response = scanner.nextInt();
-//
-//                if(response == 1)
-//                {
-//                   addDoctor();
-//                }
-//                else if(response == 2)
-//                {
-//                    viewDoctorDetails();
-//                }
-//                else if(response == 3)
-//                {
-//                    updateDoctor();
-//                }
-//                else if(response == 4)
-//                {
-//                    deleteDoctor();
-//                }
-//                else if(response == 5)
-//                {
-//                    viewAllDoctors();
-//                }
-//                else if(response == 6)
-//                {
-//                    break;
-//                }
-//                else
-//                {
-//                    System.out.println("Invalid option, please try again!\n");                
-//                }
-//            }
-//            
-//            if(response == 6)
-//            {
-//                break;
-//            }
-//        }
-//    }
-//    
-//    private void addDoctor() 
-//    {
-//        Scanner scanner = new Scanner(System.in);
-//        DoctorEntity newDoctorEntity = new DoctorEntity();
-//        
-//        System.out.println("*** CARS :: Administration Operation :: Add New Doctor ***\n");
-//        System.out.print("Enter First Name> ");
-//        newDoctorEntity.setFirstName(scanner.nextLine().trim());
-//        System.out.print("Enter Last Name> ");
-//        newDoctorEntity.setLastName(scanner.nextLine().trim());
-//        System.out.print("Enter Registration> ");
-//        newDoctorEntity.setRegistration(scanner.nextLine().trim());
-//        System.out.print("Enter Qualification> ");
-//        newDoctorEntity.setQualifications(scanner.nextLine().trim());
-//
-//        Long newDoctorId = doctorSessionBeanRemote.createNewDoctor(newDoctorEntity);
-//        System.out.println(newDoctorId + "Doctor has been added successfully\n");
-//    }
-//    
-//    private void viewDoctorDetails()
-//    {
-//        Scanner scanner = new Scanner(System.in);
-//        
-//        System.out.println("*** CARS :: Administration Operation :: View Doctor Details***\n");
-//        System.out.print("Enter Doctor ID> ");
-//        Long doctorId = scanner.nextLong();
-//        
-//        try
-//        {
-//            DoctorEntity doctorEntity = doctorSessionBeanRemote.retrieveDoctorByDoctorId(doctorId);
-//            System.out.printf("%8s%20s%20s%15s%20s\n", "Doctor ID", "First Name", "Last Name", "Registration", "Qualification");
-//            System.out.printf("%8s%20s%20s%15s%20s\n", doctorEntity.getDoctorId().toString(), doctorEntity.getFirstName(), doctorEntity.getLastName(), doctorEntity.getRegistration(), doctorEntity.getQualifications());         
-//            System.out.println("------------------------");
-//
-//        }
-//        catch(DoctorNotFoundException ex)
-//        {
-//            System.out.println("An error has occurred while retrieving patient: " + ex.getMessage() + "\n");
-//        }
-//    }
-//    
-//    private void updateDoctor() throws DoctorNotFoundException
-//    {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.print("Enter Doctor ID> ");
-//        Long doctorId = scanner.nextLong();
-//        DoctorEntity doctorEntity = doctorSessionBeanRemote.retrieveDoctorByDoctorId(doctorId);
-//        String input;
-//        
-//        System.out.println("*** CARS :: Administration Operation :: Update Doctor ***\n");
-//        System.out.print("Enter First Name (blank if no change)> ");
-//        input = scanner.nextLine().trim();
-//        if(input.length() > 0)
-//        {
-//            doctorEntity.setFirstName(input);
-//        }
-//        
-//        System.out.print("Enter Last Name (blank if no change)> ");
-//        input = scanner.nextLine().trim();
-//        if(input.length() > 0)
-//        {
-//            doctorEntity.setLastName(input);
-//        }
-//        
-//        System.out.print("Enter Registration (blank if no change)> ");
-//        input = scanner.nextLine().trim();
-//        if(input.length() > 0)
-//        {
-//            doctorEntity.setRegistration(input);
-//        }
-//        
-//        System.out.print("Enter Qualification (blank if no change)> ");
-//        input = scanner.nextLine().trim();
-//        if(input.length() > 0)
-//        {
-//            doctorEntity.setQualifications(input);
-//        }
-//        
-//        try
-//        {
-//            doctorSessionBeanRemote.updateDoctor(doctorEntity);
-//            System.out.println("Docttor updated successfully!\n");
-//        }
-//        catch (UpdateDoctorException ex) 
-//        {
-//            System.out.println("An error has occurred while updating doctor: " + ex.getMessage() + "\n");
-//        }
-//    }
-//    
-//    private void deleteDoctor() throws AppointmentNotFoundException 
-//    {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.print("Enter Patient ID> ");
-//        Long doctorId = scanner.nextLong();
-//
-//        String input;
-//
-//        try 
-//        {
-//            DoctorEntity doctorEntity = doctorSessionBeanRemote.retrieveDoctorByDoctorId(doctorId);
-//            System.out.println("*** CARS :: Administration Operation :: Delete Doctor ***\n");
-//            System.out.printf("Confirm Delete Doctor %s (Registration: %s) (Enter 'Y' to Delete)> ", doctorEntity.getFirstName(), doctorEntity.getRegistration());
-//            input = scanner.nextLine().trim();
-//
-//            if (input.equals("Y")) 
-//            {
-//                try 
-//                {
-//                    doctorSessionBeanRemote.deleteDoctor(doctorEntity);
-//                    System.out.println("Doctoe deleted successfully!\n");
-//                } 
-//                catch (DoctorNotFoundException | DeleteDoctorException ex) 
-//                {
-//                    System.out.println("An error has occurred while deleting doctor: " + ex.getMessage() + "\n");
-//                }
-//            } 
-//            else 
-//            {
-//                System.out.println("Doctor NOT deleted!\n");
-//            }
-//        } 
-//        catch (DoctorNotFoundException ex) 
-//        {
-//            System.out.println("An error has occurred while retrieving doctor: " + ex.getMessage() + "\n");
-//        }
-//    }
-//    
-//    private void viewAllDoctors() 
-//    {
-//        Scanner scanner = new Scanner(System.in);
-//        
-//        System.out.println("*** CARS :: Administration Operation :: View All Doctors ***\n");
-//        
-//        List<DoctorEntity> doctorEntities = doctorSessionBeanRemote.retrieveAllDoctors();
-//        System.out.printf("%8s%20s%20s%15s%20s\n", "Patient ID", "First Name", "Last Name", "Registration", "Qualification");
-//
-//        for(DoctorEntity doctorEntity : doctorEntities)
-//        {
-//            System.out.printf("%8s%20s%20s%15s%20s\n", doctorEntity.getDoctorId().toString(), doctorEntity.getFirstName(), doctorEntity.getLastName(), doctorEntity.getRegistration(), doctorEntity.getQualifications());         
-//        }
-//        
-//        System.out.print("Press any key to continue...> ");
-//        scanner.nextLine();
-//    }
+        private void doctorManagement() throws AppointmentNotFoundException, DoctorNotFoundException
+    {
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+        
+        while(true)
+        {
+            System.out.println("*** CARS :: Administration Operation :: Doctor Management ***\n");
+            System.out.println("1: Add Doctor");
+            System.out.println("2: View Doctor Details");
+            System.out.println("3: Update Doctor");
+            System.out.println("4: Delete Doctor");
+            System.out.println("5: View All Doctor");
+            System.out.println("6: Back\n");
+
+            response = 0;
+            
+            while(response < 1 || response > 6)
+            {
+                System.out.print("> ");
+
+                response = scanner.nextInt();
+
+                if(response == 1)
+                {
+                   addDoctor();
+                }
+                else if(response == 2)
+                {
+                    viewDoctorDetails();
+                }
+                else if(response == 3)
+                {
+                    updateDoctor();
+                }
+                else if(response == 4)
+                {
+                    deleteDoctor();
+                }
+                else if(response == 5)
+                {
+                    viewAllDoctors();
+                }
+                else if(response == 6)
+                {
+                    break;
+                }
+                else
+                {
+                    System.out.println("Invalid option, please try again!\n");                
+                }
+            }
+            
+            if(response == 6)
+            {
+                break;
+            }
+        }
+    }
+    
+    private void addDoctor() 
+    {
+        Scanner scanner = new Scanner(System.in);
+        DoctorEntity newDoctorEntity = new DoctorEntity();
+        
+        System.out.println("*** CARS :: Administration Operation :: Add New Doctor ***\n");
+        System.out.print("Enter First Name> ");
+        newDoctorEntity.setFirstName(scanner.nextLine().trim());
+        System.out.print("Enter Last Name> ");
+        newDoctorEntity.setLastName(scanner.nextLine().trim());
+        System.out.print("Enter Registration> ");
+        newDoctorEntity.setRegistration(scanner.nextLine().trim());
+        System.out.print("Enter Qualification> ");
+        newDoctorEntity.setQualifications(scanner.nextLine().trim());
+
+        Long newDoctorId = doctorSessionBeanRemote.createNewDoctor(newDoctorEntity);
+        System.out.println(newDoctorId + " Doctor has been added successfully\n");
+    }
+    
+    private void viewDoctorDetails()
+    {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("*** CARS :: Administration Operation :: View Doctor Details***\n");
+        System.out.print("Enter Doctor ID> ");
+        Long doctorId = scanner.nextLong();
+        
+        try
+        {
+            DoctorEntity doctorEntity = doctorSessionBeanRemote.retrieveDoctorByDoctorId(doctorId);
+            System.out.printf("%-15s|%-20s|%-20s|%-20s|%-20s\n", "Doctor ID", "First Name", "Last Name", "Registration", "Qualification");
+            System.out.printf("%-15s|%-20s|%-20s|%-20s|%-20s\n", doctorEntity.getDoctorId().toString(), doctorEntity.getFirstName(), doctorEntity.getLastName(), doctorEntity.getRegistration(), doctorEntity.getQualifications());         
+            System.out.println("------------------------");
+
+        }
+        catch(DoctorNotFoundException ex)
+        {
+            System.out.println("An error has occurred while retrieving patient: " + ex.getMessage() + "\n");
+        }
+    }
+    
+    private void updateDoctor() throws DoctorNotFoundException
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Doctor ID> ");
+        Long doctorId = scanner.nextLong();
+        DoctorEntity doctorEntity = doctorSessionBeanRemote.retrieveDoctorByDoctorId(doctorId);
+        String input;
+        
+        scanner.nextLine();
+        
+        System.out.println("*** CARS :: Administration Operation :: Update Doctor ***\n");
+        System.out.print("Enter First Name (blank if no change)> ");
+        input = scanner.nextLine().trim();
+        if(input.length() > 0)
+        {
+            doctorEntity.setFirstName(input);
+        }
+        
+        System.out.print("Enter Last Name (blank if no change)> ");
+        input = scanner.nextLine().trim();
+        if(input.length() > 0)
+        {
+            doctorEntity.setLastName(input);
+        }
+        
+        System.out.print("Enter Registration (blank if no change)> ");
+        input = scanner.nextLine().trim();
+        if(input.length() > 0)
+        {
+            doctorEntity.setRegistration(input);
+        }
+        
+        System.out.print("Enter Qualification (blank if no change)> ");
+        input = scanner.nextLine().trim();
+        if(input.length() > 0)
+        {
+            doctorEntity.setQualifications(input);
+        }
+        
+        try
+        {
+            doctorSessionBeanRemote.updateDoctor(doctorEntity);
+            System.out.println("Doctor updated successfully!\n");
+        }
+        catch (UpdateDoctorException ex) 
+        {
+            System.out.println("An error has occurred while updating doctor: " + ex.getMessage() + "\n");
+        }
+    }
+    
+    private void deleteDoctor() throws AppointmentNotFoundException 
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Doctor ID> ");
+        Long doctorId = scanner.nextLong();
+
+        String input;
+        
+        scanner.nextLine();
+
+        try 
+        {
+            DoctorEntity doctorEntity = doctorSessionBeanRemote.retrieveDoctorByDoctorId(doctorId);
+            System.out.println("*** CARS :: Administration Operation :: Delete Doctor ***\n");
+            System.out.printf("Confirm Delete Doctor %s (Registration: %s) (Enter 'Y' to Delete)> ", doctorEntity.getFirstName(), doctorEntity.getRegistration());
+            input = scanner.nextLine().trim();
+
+            if (input.equals("Y")) 
+            {
+                try 
+                {
+                    doctorSessionBeanRemote.deleteDoctor(doctorEntity);
+                    System.out.println("Doctoe deleted successfully!\n");
+                } 
+                catch (DoctorNotFoundException | DeleteDoctorException ex) 
+                {
+                    System.out.println("An error has occurred while deleting doctor: " + ex.getMessage() + "\n");
+                }
+            } 
+            else 
+            {
+                System.out.println("Doctor NOT deleted!\n");
+            }
+        } 
+        catch (DoctorNotFoundException ex) 
+        {
+            System.out.println("An error has occurred while retrieving doctor: " + ex.getMessage() + "\n");
+        }
+    }
+    
+    private void viewAllDoctors() 
+    {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("*** CARS :: Administration Operation :: View All Doctors ***\n");
+        
+        List<DoctorEntity> doctorEntities = doctorSessionBeanRemote.retrieveAllDoctors();
+        System.out.printf("%-15s|%-20s|%-20s|%-20s|%-20s\n", "Doctor ID", "First Name", "Last Name", "Registration", "Qualification");
+
+        for(DoctorEntity doctorEntity : doctorEntities)
+        {
+            System.out.printf("%-15s|%-20s|%-20s|%-20s|%-20s\n", doctorEntity.getDoctorId().toString(), doctorEntity.getFirstName(), doctorEntity.getLastName(), doctorEntity.getRegistration(), doctorEntity.getQualifications());         
+        }
+        
+        System.out.print("Press any key to continue...> ");
+        scanner.nextLine();
+    }
     
     private void staffManagement() throws StaffNotFoundException
     {

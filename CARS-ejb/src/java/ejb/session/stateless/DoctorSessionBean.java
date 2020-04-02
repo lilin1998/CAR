@@ -116,9 +116,9 @@ public class DoctorSessionBean implements DoctorSessionBeanRemote, DoctorSession
         Long doctorId = doctorEntity.getDoctorId();
         DoctorEntity doctorEntityToRemove = retrieveDoctorByDoctorId(doctorId);
         
-        AppointmentEntity appointmentEntity = appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(doctorId);
+        List<AppointmentEntity> appointmentEntity = appointmentEntitySessionBeanLocal.retrieveAppointmentByDoctorId(doctorId);
         
-        if(appointmentEntity == null)
+        if(appointmentEntity.isEmpty())
         {
             em.remove(doctorEntityToRemove);
         }
