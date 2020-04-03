@@ -14,6 +14,8 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -199,12 +201,11 @@ public class RegistrationOperationModule {
         System.out.println("*** CARS :: Registration Operation :: Register Walk-In Consultation ***\n");
         
         //retrieve today's date and current time
-        Long today = System.currentTimeMillis();
-        java.sql.Date dateToday = new java.sql.Date(today);
+        Date dateToday = Date.valueOf(LocalDate.now());
         Calendar cal = Calendar.getInstance();
         cal.setTime(dateToday);
         int day = cal.get(Calendar.DAY_OF_WEEK);
-        java.sql.Time timeNow = new java.sql.Time(today);
+        Time timeNow = Time.valueOf(LocalTime.now());
         
         //check if doctor on leave
         
@@ -220,9 +221,7 @@ public class RegistrationOperationModule {
         System.out.println("");
         
         //retrieve latest display time
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.HOUR_OF_DAY, 3);
-        Time threeHoursLater = new Time((c.getTime()).getTime());
+        Time threeHoursLater = Time.valueOf(LocalTime.now().plusHours(3));
         
         List<String> availableTimeList = new ArrayList<>();
         if (day >= Calendar.MONDAY && day <= Calendar.WEDNESDAY) 
@@ -230,7 +229,8 @@ public class RegistrationOperationModule {
             for (String time : timeSlot) 
             {
                 time += ":00";
-                if (Time.valueOf(time).compareTo(timeNow) >= 0 && Time.valueOf(time).compareTo(threeHoursLater) <= 0)
+                Time compareTime = Time.valueOf(time);
+                if (compareTime.compareTo(timeNow) >= 0 && compareTime.compareTo(threeHoursLater) <= 0)
                 {
                     availableTimeList.add(time);
                 }
@@ -241,23 +241,26 @@ public class RegistrationOperationModule {
             for (String time : timeSlotThur) 
             {
                 time += ":00";
-                if (Time.valueOf(time).compareTo(timeNow) >= 0 && Time.valueOf(time).compareTo(threeHoursLater) <= 0)
+                Time compareTime = Time.valueOf(time);
+                if (compareTime.compareTo(timeNow) >= 0 && compareTime.compareTo(threeHoursLater) <= 0)
                 {
                     availableTimeList.add(time);
                 }
             }
         } 
-        else //Friday
+        else if (day == Calendar.FRIDAY)//Friday
         {
             for (String time : timeSlotFri) 
-            {time += ":00";
-                if (Time.valueOf(time).compareTo(timeNow) >= 0 && Time.valueOf(time).compareTo(threeHoursLater) <= 0)
+            {
+                time += ":00";
+                Time compareTime = Time.valueOf(time);
+                if (compareTime.compareTo(timeNow) >= 0 && compareTime.compareTo(threeHoursLater) <= 0)
                 {
                     availableTimeList.add(time);
                 }    
             }       
         }
-        
+
         System.out.println("Availability:");
         try
         {
@@ -358,7 +361,7 @@ public class RegistrationOperationModule {
                 String doctorName = doctor.getFirstName() + " " + doctor.getLastName();
 
                 System.out.println(patientName + " appointment with Dr. " + doctorName + " has been booked at " + bookingTime.substring(0, 5) + ".");
-                System.out.println("Queue number is: \n");
+                System.out.println("Queue number is: " + queueNo + ".\n");
             
             }
         }
@@ -379,7 +382,7 @@ public class RegistrationOperationModule {
         String patientIdentityNo = scanner.nextLine().trim();
         System.out.println();
         
-        Date todayDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
+        Date todayDate = Date.valueOf(LocalDate.now());
       
         List<AppointmentEntity> patientAppointments = appointmentEntitySessionBeanRemote.retrieveAppointmentByPatientIdentityNoAndDate(patientIdentityNo, todayDate);
         if (patientAppointments.isEmpty())
@@ -412,7 +415,7 @@ public class RegistrationOperationModule {
                     String timeString = appointmentEntity.getTime().toString();
                     String patientName = appointmentEntity.getPatientEntity().getFirstName() + " " + appointmentEntity.getPatientEntity().getLastName();
                     System.out.println(patientName + " appointment is confirmed with " + doctorName + " at " + timeString.substring(0, 5) + ".");
-                    System.out.println("Queue Number is " + queueNo + "\n");
+                    System.out.println("Queue Number is " + queueNo + ".\n");
                     queueNo++;
                 }
             }
