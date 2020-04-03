@@ -306,11 +306,11 @@ public class RegistrationOperationModule {
                                 for (int j = 0; j < upcomingappointment.size(); j++)
                                 {
                                     String appointmentTime = upcomingappointment.get(j).getTime().toString();
-                                    if (appointmentTime.substring(0, 5).equals(availableTimeList.get(i)))
-                                    {
+                                    if (appointmentTime.equals(availableTimeList.get(i)))
+                                    {    
                                         System.out.printf("%-6s|", "X");
                                     }
-                                    if (!appointmentTime.substring(0, 5).equals(availableTimeList.get(i)) && j == upcomingappointment.size() - 1)
+                                    if (!appointmentTime.equals(availableTimeList.get(i)) && j == upcomingappointment.size() - 1)
                                     {
                                     System.out.printf("%-2s|", "O");
                                     }
