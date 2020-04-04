@@ -14,7 +14,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.StaffNotFoundException;
-import util.exception.UpdateStaffException;
 
 @Stateless
 @Local(StaffEntitySessionBeanLocal.class)
@@ -106,8 +105,7 @@ public class StaffEntitySessionBean implements StaffEntitySessionBeanRemote, Sta
             StaffEntity staffEntity = retrieveStaffByUsername(username);
             
             if(staffEntity.getPassword().equals(password))
-            {
-//                staffEntity.getSaleTransactionEntities().size();                
+            {             
                 return staffEntity;
             }
             else

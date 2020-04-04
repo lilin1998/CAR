@@ -39,5 +39,10 @@ CARSLibrary/nbproject/private/
 CARSLibrary/build/
 CARSLibrary/dist/
 
+SelfServiceKiosk/nbproject/private/
+SelfServiceKiosk/build/
+SelfServiceKiosk/dist/
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/SelfServiceKiosk/nbproject/private/

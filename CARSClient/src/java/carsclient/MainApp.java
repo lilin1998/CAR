@@ -34,8 +34,6 @@ public class MainApp
     
     private StaffEntity currentStaffEntity;
     
-    
-    
     public MainApp() 
     {
     }

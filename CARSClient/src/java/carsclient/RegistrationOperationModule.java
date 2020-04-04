@@ -155,6 +155,8 @@ public class RegistrationOperationModule {
         }   
     }
     
+    
+    
     private static String getSecurePassword(String passwordToHash, byte[] salt)
     {
         String generatedPassword = null;
@@ -180,7 +182,9 @@ public class RegistrationOperationModule {
         }
         return generatedPassword;
     }
-     
+    
+    
+    
     //Add salt
     private static byte[] getSalt() throws NoSuchAlgorithmException, NoSuchProviderException
     {
