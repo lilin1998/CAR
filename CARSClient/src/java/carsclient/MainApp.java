@@ -81,8 +81,8 @@ public class MainApp
                         doLogin();
                         System.out.println("Login successful!\n");
                         
-                        registrationOperationModule = new RegistrationOperationModule(doctorSessionBeanRemote, appointmentEntitySessionBeanRemote, patientSessionBeanRemote, currentStaffEntity);
-                        appointmentOperationModule = new AppointmentOperationModule(doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote);
+                        registrationOperationModule = new RegistrationOperationModule(doctorSessionBeanRemote, appointmentEntitySessionBeanRemote, patientSessionBeanRemote, currentStaffEntity, leaveEntitySessionBeanRemote);
+                        appointmentOperationModule = new AppointmentOperationModule(doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote, leaveEntitySessionBeanRemote);
                         administrationOperationModule = new AdministrationOperationModule(doctorSessionBeanRemote, patientSessionBeanRemote, staffEntitySessionBeanRemote, leaveEntitySessionBeanRemote);
                         menuMain();
                     }

@@ -2,6 +2,7 @@ package carsclient;
 
 import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.DoctorSessionBeanRemote;
+import ejb.session.stateless.LeaveEntitySessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
 import entity.AppointmentEntity;
 import entity.DoctorEntity;
@@ -29,6 +30,7 @@ public class RegistrationOperationModule {
     private DoctorSessionBeanRemote doctorSessionBeanRemote;
     private AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
     private PatientSessionBeanRemote patientSessionBeanRemote;
+    private LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote;
     
     private StaffEntity currentStaffEntity;
     
@@ -43,11 +45,12 @@ public class RegistrationOperationModule {
 
     
     
-    public RegistrationOperationModule(DoctorSessionBeanRemote doctorSessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, StaffEntity currentStaffEntity) {
+    public RegistrationOperationModule(DoctorSessionBeanRemote doctorSessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, StaffEntity currentStaffEntity, LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote) {
         this.doctorSessionBeanRemote = doctorSessionBeanRemote;
         this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
         this.patientSessionBeanRemote = patientSessionBeanRemote;
         this.currentStaffEntity = currentStaffEntity;
+        this.leaveEntitySessionBeanRemote = leaveEntitySessionBeanRemote;
     }
     
     

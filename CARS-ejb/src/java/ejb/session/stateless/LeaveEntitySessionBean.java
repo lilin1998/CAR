@@ -2,7 +2,6 @@ package ejb.session.stateless;
 
 import entity.LeaveEntity;
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import javax.ejb.Local;
@@ -28,7 +27,6 @@ public class LeaveEntitySessionBean implements LeaveEntitySessionBeanRemote, Lea
     public LeaveEntitySessionBean() 
     {
     }
-   
     
     
     
@@ -40,7 +38,6 @@ public class LeaveEntitySessionBean implements LeaveEntitySessionBeanRemote, Lea
         
         return leaveEntity;
     }
-   
     
   
     
