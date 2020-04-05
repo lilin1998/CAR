@@ -45,6 +45,10 @@ public class SelfServiceRegistrationOperationModule
     
     public void registerWalkinConsultation()
     {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("*** Self-Service Kiosk :: Register Walk-In Consultation ***\n");
+        
         //eliz paste logic here
     }
     
@@ -54,7 +58,7 @@ public class SelfServiceRegistrationOperationModule
     {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("*** CARS :: Registration Operation :: Register Consultation By Appointment ***\n");
+        System.out.println("*** Self-Service Kiosk :: Register Consultation By Appointment ***\n");
         
         Date todayDate = Date.valueOf(LocalDate.now());
       

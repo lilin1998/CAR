@@ -56,7 +56,7 @@ public class SelfServiceAppointmentOperationModule
     {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("*** CARS :: Appointment Operation :: View Patient Appointments ***\n");
+        System.out.println("*** Self-Service Kiosk :: View Appointments ***\n");
       
         try
         { 
@@ -97,7 +97,7 @@ public class SelfServiceAppointmentOperationModule
         PatientEntity patient = null;
         List<String> tempList = new ArrayList<>();
         
-        System.out.println("*** CARS :: Appointment Operation :: Add Appointment ***\n");
+        System.out.println("*** Self-Service Kiosk :: Add Appointment ***\n");
         
         List<DoctorEntity> doctors = doctorSessionBeanRemote.retrieveAllDoctors();
         System.out.println("Doctor:");
@@ -318,7 +318,7 @@ public class SelfServiceAppointmentOperationModule
     {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("*** CARS :: Appointment Operation :: Cancel Appointment ***\n");
+        System.out.println("*** Self-Service Kiosk :: Cancel Appointment ***\n");
         
         try
         { 
