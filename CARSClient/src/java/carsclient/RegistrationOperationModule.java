@@ -18,6 +18,7 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
@@ -121,6 +122,8 @@ public class RegistrationOperationModule {
         byte[] salt = getSalt();
         String securePassword = getSecurePassword(passwordToHash, salt);
         newPatientEntity.setPassword(securePassword);
+        String userSalt = Base64.getEncoder().encodeToString(salt);
+        newPatientEntity.setUsersalt(userSalt);
         
         System.out.print("Enter First Name> ");
         newPatientEntity.setFirstName(scanner.nextLine().trim());
@@ -411,7 +414,7 @@ public class RegistrationOperationModule {
         List<AppointmentEntity> patientAppointments = appointmentEntitySessionBeanRemote.retrieveAppointmentByPatientIdentityNoAndDate(patientIdentityNo, todayDate);
         if (patientAppointments.isEmpty())
         {
-            System.out.println("Patient has no upcoming appointments!\n");
+            System.out.println("Patient has no appointments today!\n");
         }
         else
         {

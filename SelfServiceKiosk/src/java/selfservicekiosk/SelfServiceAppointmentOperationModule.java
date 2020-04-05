@@ -27,6 +27,8 @@ public class SelfServiceAppointmentOperationModule
     private AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
     private LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote;
 
+    private PatientEntity currentPatientEntity;
+    
     private String[] timeSlot = {"08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"};
     private String[] timeSlotThur = {"08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"};
     private String[] timeSlotFri = {"08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00"};
@@ -37,10 +39,11 @@ public class SelfServiceAppointmentOperationModule
 
     
     
-    public SelfServiceAppointmentOperationModule(DoctorSessionBeanRemote doctorSessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote) 
+    public SelfServiceAppointmentOperationModule(PatientEntity currentPatientEntity, DoctorSessionBeanRemote doctorSessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote) 
     {
         this();
         
+        this.currentPatientEntity = currentPatientEntity;
         this.doctorSessionBeanRemote = doctorSessionBeanRemote;
         this.patientSessionBeanRemote = patientSessionBeanRemote;
         this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
@@ -54,13 +57,10 @@ public class SelfServiceAppointmentOperationModule
         Scanner scanner = new Scanner(System.in);
         
         System.out.println("*** CARS :: Appointment Operation :: View Patient Appointments ***\n");
-        System.out.print("Enter Patient Identity Number> ");
-        String patientIdentityNo = scanner.nextLine().trim();
-        System.out.println();
       
         try
         { 
-            List<AppointmentEntity> patientAppointments = appointmentEntitySessionBeanRemote.retrieveAppointmentByPatientIdentityNo(patientIdentityNo);
+            List<AppointmentEntity> patientAppointments = appointmentEntitySessionBeanRemote.retrieveAppointmentByPatientIdentityNo(currentPatientEntity.getIdentityNumber());
             if (patientAppointments.isEmpty())
             {
                 System.out.println("Patient has no upcoming appointments!\n");
@@ -115,6 +115,7 @@ public class SelfServiceAppointmentOperationModule
         scanner.nextLine();
         System.out.print("Enter Date> ");
         date = scanner.nextLine();
+        System.out.println("");
 
         Date actualDate = Date.valueOf(date);
         Calendar cal = Calendar.getInstance();
@@ -123,7 +124,7 @@ public class SelfServiceAppointmentOperationModule
         
         //set two days validation rule
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DAY_OF_MONTH, 2);
+        c.add(Calendar.DAY_OF_MONTH, 1);
         Date twoDaysLater = new Date((c.getTime()).getTime());
             
         //check if doctor exists
@@ -268,18 +269,16 @@ public class SelfServiceAppointmentOperationModule
                                 }
                             }
                         }
-                    
+                        
+                        System.out.println("");
                         System.out.print("Enter Time> ");
                         String timeInput = scanner.nextLine().trim();
                         String timeformat = timeInput + ":00";
                         Time time = Time.valueOf(timeformat);
-
-                        System.out.print("Enter Patient Identity Number> ");
-                        String patientIdentityNo = scanner.nextLine().trim();
-                    
+                        
                         try 
                         {
-                            patient =  patientSessionBeanRemote.retrievePatientByPatientIdentityNumber(patientIdentityNo);
+                            patient =  patientSessionBeanRemote.retrievePatientByPatientIdentityNumber(currentPatientEntity.getIdentityNumber());
                         } 
                         catch (PatientNotFoundException ex) 
                         {
@@ -288,7 +287,7 @@ public class SelfServiceAppointmentOperationModule
         
                         AppointmentEntity newAppointmentEntity = new AppointmentEntity(doctor, actualDate, time, patient);
                         appointmentEntitySessionBeanRemote.createNewAppointment(newAppointmentEntity);
-                        patientSessionBeanRemote.updatePatientList(patientIdentityNo);
+                        patientSessionBeanRemote.updatePatientList(currentPatientEntity.getIdentityNumber());
                         doctorSessionBeanRemote.updateDoctorList(doctorId);
 
                         String patientName = patient.getFirstName() + " " + patient.getLastName();
@@ -320,13 +319,10 @@ public class SelfServiceAppointmentOperationModule
         Scanner scanner = new Scanner(System.in);
         
         System.out.println("*** CARS :: Appointment Operation :: Cancel Appointment ***\n");
-        System.out.print("Enter Patient Identity Number> ");
-        String patientIdentityNo = scanner.nextLine().trim();
-        System.out.print("\n");
         
         try
         { 
-            List<AppointmentEntity> patientAppointments = appointmentEntitySessionBeanRemote.retrieveAppointmentByPatientIdentityNo(patientIdentityNo);
+            List<AppointmentEntity> patientAppointments = appointmentEntitySessionBeanRemote.retrieveAppointmentByPatientIdentityNo(currentPatientEntity.getIdentityNumber());
             if (patientAppointments.isEmpty())
             {
                 System.out.println("Patient has no upcoming appointments!\n");
@@ -359,7 +355,7 @@ public class SelfServiceAppointmentOperationModule
             //remove appointment from database
             appointmentEntitySessionBeanRemote.deleteAppointment(appointmentId);
             doctorSessionBeanRemote.updateDoctorList(doctorEntity.getDoctorId());
-            patientSessionBeanRemote.updatePatientList(patientIdentityNo);
+            patientSessionBeanRemote.updatePatientList(currentPatientEntity.getIdentityNumber());
             
             System.out.println(patientName + " appointment with " + doctorName + " at " + timeString.substring(0, 5) + " on " + dateString + " has been cancelled.\n");
         }

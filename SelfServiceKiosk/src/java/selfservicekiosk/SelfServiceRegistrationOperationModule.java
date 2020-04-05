@@ -5,6 +5,7 @@ import ejb.session.stateless.DoctorSessionBeanRemote;
 import ejb.session.stateless.LeaveEntitySessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
 import entity.AppointmentEntity;
+import entity.PatientEntity;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
@@ -17,6 +18,8 @@ public class SelfServiceRegistrationOperationModule
     private PatientSessionBeanRemote patientSessionBeanRemote;
     private LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote;
     
+    private PatientEntity currentPatientEntity;
+    
     private static int queueNo = 1;
     
     private String[] timeSlot = {"08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"};
@@ -28,7 +31,10 @@ public class SelfServiceRegistrationOperationModule
 
     
     
-    public SelfServiceRegistrationOperationModule(DoctorSessionBeanRemote doctorSessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote) {
+    public SelfServiceRegistrationOperationModule(PatientEntity currentPatientEntity, DoctorSessionBeanRemote doctorSessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote) {
+        this();
+        
+        this.currentPatientEntity = currentPatientEntity;
         this.doctorSessionBeanRemote = doctorSessionBeanRemote;
         this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
         this.patientSessionBeanRemote = patientSessionBeanRemote;
@@ -49,16 +55,13 @@ public class SelfServiceRegistrationOperationModule
         Scanner scanner = new Scanner(System.in);
         
         System.out.println("*** CARS :: Registration Operation :: Register Consultation By Appointment ***\n");
-        System.out.print("Enter Patient Identity Number> ");
-        String patientIdentityNo = scanner.nextLine().trim();
-        System.out.println();
         
         Date todayDate = Date.valueOf(LocalDate.now());
       
-        List<AppointmentEntity> patientAppointments = appointmentEntitySessionBeanRemote.retrieveAppointmentByPatientIdentityNoAndDate(patientIdentityNo, todayDate);
+        List<AppointmentEntity> patientAppointments = appointmentEntitySessionBeanRemote.retrieveAppointmentByPatientIdentityNoAndDate(currentPatientEntity.getIdentityNumber(), todayDate);
         if (patientAppointments.isEmpty())
         {
-            System.out.println("Patient has no upcoming appointments!\n");
+            System.out.println("Patient has no appointments today!\n");
         }
         else
         {

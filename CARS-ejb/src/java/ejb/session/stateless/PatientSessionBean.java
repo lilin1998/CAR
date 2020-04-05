@@ -15,7 +15,6 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.DeletePatientException;
-import util.exception.InvalidLoginCredentialException;
 import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
 import util.exception.UpdatePatientException;
@@ -115,6 +114,7 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
                 p.setLastName(patientEntity.getLastName());
                 p.setAge(patientEntity.getAge());
                 p.setPassword(patientEntity.getPassword());
+                p.setUsersalt(patientEntity.getUsersalt());
                 p.setGender(patientEntity.getGender());
                 p.setAge(patientEntity.getAge());
                 p.setPhone(patientEntity.getPhone());
@@ -170,30 +170,6 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
         if (!password.matches("\\d{6}")) 
         {
             throw new PasswordException("Password is invalid! Please make sure it is a 6 digit number.");
-        }
-    }
-    
-    
-    
-    @Override
-    public PatientEntity patientLogin(String identityNo, String password) throws InvalidLoginCredentialException
-    {
-        try
-        {
-            PatientEntity patientEntity = retrievePatientByPatientIdentityNumber(identityNo);
-            
-            if(patientEntity.getPassword().equals(password))
-            {             
-                return patientEntity;
-            }
-            else
-            {
-                throw new InvalidLoginCredentialException("Password is invalid!");
-            }
-        }
-        catch(PatientNotFoundException ex)
-        {
-            throw new InvalidLoginCredentialException("Patient Identity Number does not exist!");
         }
     }
 }

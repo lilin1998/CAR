@@ -3,7 +3,6 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -37,6 +36,8 @@ public class PatientEntity implements Serializable
     private String phone;
     @Column(nullable = false)
     private String address;
+    @Column(unique = true)
+    private String usersalt;
     @OneToMany(mappedBy = "patientEntity")
     private List<AppointmentEntity> patientAppointments;
 
@@ -47,6 +48,7 @@ public class PatientEntity implements Serializable
     public PatientEntity(String identityNumber, String password, String firstName, String lastName, GenderEnum gender, Integer age, String phone, String address) 
     {
         this();
+        
         this.identityNumber = identityNumber;
         this.password = password;
         this.firstName = firstName;
@@ -57,10 +59,27 @@ public class PatientEntity implements Serializable
         this.address = address;
         this.patientAppointments = new ArrayList<>();
     }
-    
-    public PatientEntity(Long patientId, String identityNumber, String password, String firstName, String lastName, GenderEnum gender, Integer age, String phone, String address) 
+
+    public PatientEntity(String identityNumber, String password, String firstName, String lastName, GenderEnum gender, Integer age, String phone, String address, String userSalt) 
     {
         this();
+        
+        this.identityNumber = identityNumber;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.age = age;
+        this.phone = phone;
+        this.address = address;
+        this.usersalt = userSalt;
+        this.patientAppointments = new ArrayList<>();
+    }
+    
+    public PatientEntity(Long patientId, String identityNumber, String password, String firstName, String lastName, GenderEnum gender, Integer age, String phone, String address, String userSalt) 
+    {
+        this();
+        
         this.patientId = patientId;
         this.identityNumber = identityNumber;
         this.password = password;
@@ -70,6 +89,7 @@ public class PatientEntity implements Serializable
         this.age = age;
         this.phone = phone;
         this.address = address;
+        this.usersalt = userSalt;
         this.patientAppointments = new ArrayList<>();
     }
 
@@ -198,6 +218,14 @@ public class PatientEntity implements Serializable
     public void setAddress(String address) 
     {
         this.address = address;
+    }
+
+    public String getUsersalt() {
+        return usersalt;
+    }
+
+    public void setUsersalt(String usersalt) {
+        this.usersalt = usersalt;
     }
 
     public List<AppointmentEntity> getPatientAppointments() {

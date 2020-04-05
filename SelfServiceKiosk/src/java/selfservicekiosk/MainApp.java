@@ -10,6 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Scanner;
 import util.exception.AppointmentNotFoundException;
 import util.exception.DoctorNotFoundException;
@@ -78,8 +79,8 @@ public class MainApp
                         doLogin();
                         System.out.println("Login successful!\n");
                         
-                        selfServiceRegistrationOperationModule = new SelfServiceRegistrationOperationModule(doctorSessionBeanRemote, appointmentEntitySessionBeanRemote, patientSessionBeanRemote,leaveEntitySessionBeanRemote);
-                        selfServiceAppointmentOperationModule = new SelfServiceAppointmentOperationModule(doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote, leaveEntitySessionBeanRemote);                   
+                        selfServiceRegistrationOperationModule = new SelfServiceRegistrationOperationModule(currentPatientEntity, doctorSessionBeanRemote, appointmentEntitySessionBeanRemote, patientSessionBeanRemote,leaveEntitySessionBeanRemote);
+                        selfServiceAppointmentOperationModule = new SelfServiceAppointmentOperationModule(currentPatientEntity, doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote, leaveEntitySessionBeanRemote);                   
                         menuMain();
                     }
                     catch(InvalidLoginCredentialException ex) 
@@ -120,6 +121,8 @@ public class MainApp
         byte[] salt = getSalt();
         String securePassword = getSecurePassword(passwordToHash, salt);
         newPatientEntity.setPassword(securePassword);
+        String userSalt = Base64.getEncoder().encodeToString(salt);
+        newPatientEntity.setUsersalt(userSalt);
         
         System.out.print("Enter First Name> ");
         newPatientEntity.setFirstName(scanner.nextLine().trim());
@@ -141,7 +144,7 @@ public class MainApp
         newPatientEntity.setPhone(scanner.nextLine().trim());
         System.out.print("Enter Address> ");
         newPatientEntity.setAddress(scanner.nextLine().trim());
-        
+
         try 
         {
             patientSessionBeanRemote.checkPassword(passwordToHash);
@@ -151,15 +154,16 @@ public class MainApp
         catch (PasswordException e) 
         {
             System.out.println("An error has occured while adding new patient: " + e.getMessage() + "\n");
-        }   
+        }  
     }
     
     
     
-    private static String getSecurePassword(String passwordToHash, byte[] salt)
+    private static String getSecurePassword(String passwordToHash, byte[] salt) 
     {
         String generatedPassword = null;
-        try {
+        try 
+        {
             // Create MessageDigest instance for MD5
             MessageDigest md = MessageDigest.getInstance("MD5");
             //Add password bytes to digest
@@ -176,9 +180,11 @@ public class MainApp
             //Get complete hashed password in hex format
             generatedPassword = sb.toString();
         } 
-        catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        catch (NoSuchAlgorithmException e) 
+        {
+            System.err.println("Exception encountered in getSecurePassword()");
         }
+        
         return generatedPassword;
     }
      
@@ -199,7 +205,7 @@ public class MainApp
     
     
     
-    public void doLogin() throws InvalidLoginCredentialException, NoSuchAlgorithmException, NoSuchProviderException
+    public void doLogin() throws InvalidLoginCredentialException, NoSuchAlgorithmException, NoSuchProviderException, PatientNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         String identityNo = "";
@@ -210,20 +216,46 @@ public class MainApp
         identityNo = scanner.nextLine().trim();
         System.out.print("Enter password> ");
         password = scanner.nextLine().trim();
-        //ELIZ: To check encryption of password
-         /*
+        
         if(identityNo.length() > 0 && password.length() > 0)
         {
-            byte[] salt = getSalt();
-            String securePassword = getSecurePassword(password, salt);
-            System.out.println(securePassword);
-            currentPatientEntity = patientSessionBeanRemote.patientLogin(identityNo, securePassword);      
+            if(verifyLogin(identityNo, password) == true)
+            {
+                currentPatientEntity = patientSessionBeanRemote.retrievePatientByPatientIdentityNumber(identityNo);
+            }
+            else
+            {
+                throw new InvalidLoginCredentialException("Password is invalid!\n");
+            }
         }
         else
         {
-            throw new InvalidLoginCredentialException("Missing login credential!");
+            throw new InvalidLoginCredentialException("Missing login credential!\n");
         }
-        */
+    }
+    
+    
+    
+    public boolean verifyLogin(String identityNo, String password) throws PatientNotFoundException
+    {
+        try 
+        {
+            PatientEntity verifyPatientEntity = patientSessionBeanRemote.retrievePatientByPatientIdentityNumber(identityNo);
+            String userSalt = verifyPatientEntity.getUsersalt();
+            byte[] salt = Base64.getDecoder().decode(userSalt);
+            String securePassword = getSecurePassword(password, salt);
+        
+            if (securePassword.equals(verifyPatientEntity.getPassword()))
+            {
+                return true;
+            }
+        } 
+        catch (PatientNotFoundException ex) 
+        {
+            System.out.println("Patient Identity Number does not exist!");
+        }
+        
+        return false;
     }
     
     
@@ -239,9 +271,9 @@ public class MainApp
             System.out.println("You are login as " + currentPatientEntity.getFirstName() + " " + currentPatientEntity.getLastName() + "\n");
             System.out.println("1: Registration Walk-In Consultation");
             System.out.println("2: Register Consultation By Appointment");
-            System.out.println("3: View Appointments\n");
-            System.out.println("4: Add Appointment\n");
-            System.out.println("5: Cancel Appointment\n");
+            System.out.println("3: View Appointments");
+            System.out.println("4: Add Appointment");
+            System.out.println("5: Cancel Appointment");
             System.out.println("6: Logout\n");
             response = 0;
             

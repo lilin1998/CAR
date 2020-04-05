@@ -166,6 +166,7 @@ public class AppointmentOperationModule
         scanner.nextLine();
         System.out.print("Enter Date> ");
         date = scanner.nextLine();
+        System.out.println("");
 
         Date actualDate = Date.valueOf(date);
         Calendar cal = Calendar.getInstance();
@@ -174,7 +175,7 @@ public class AppointmentOperationModule
         
         //set two days validation rule
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DAY_OF_MONTH, 2);
+        c.add(Calendar.DAY_OF_MONTH, 1);
         Date twoDaysLater = new Date((c.getTime()).getTime());
             
         //check if doctor exists
@@ -319,7 +320,8 @@ public class AppointmentOperationModule
                                 }
                             }
                         }
-                    
+                        
+                        System.out.println("");
                         System.out.print("Enter Time> ");
                         String timeInput = scanner.nextLine().trim();
                         String timeformat = timeInput + ":00";
