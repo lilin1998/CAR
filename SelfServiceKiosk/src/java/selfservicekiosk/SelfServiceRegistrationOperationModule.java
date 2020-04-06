@@ -5,11 +5,20 @@ import ejb.session.stateless.DoctorSessionBeanRemote;
 import ejb.session.stateless.LeaveEntitySessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
 import entity.AppointmentEntity;
+import entity.DoctorEntity;
+import entity.LeaveEntity;
 import entity.PatientEntity;
 import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
+import util.exception.CreateAppointmentException;
+import util.exception.DoctorNotFoundException;
+import util.exception.PatientNotFoundException;
 
 public class SelfServiceRegistrationOperationModule 
 {
@@ -43,13 +52,168 @@ public class SelfServiceRegistrationOperationModule
 
     
     
-    public void registerWalkinConsultation()
+    public void registerWalkinConsultation() throws DoctorNotFoundException, PatientNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         
         System.out.println("*** Self-Service Kiosk :: Register Walk-In Consultation ***\n");
         
-        //eliz paste logic here
+        //retrieve today's date and current time
+        Date dateToday = Date.valueOf(LocalDate.now());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dateToday);
+        int day = cal.get(Calendar.DAY_OF_WEEK);
+        Time timeNow = Time.valueOf(LocalTime.now());
+        
+        List<DoctorEntity> doctors = doctorSessionBeanRemote.retrieveAllDoctors();
+        List<DoctorEntity> doctorsOnLeave = new ArrayList<>();
+        
+        for (DoctorEntity doctorEntity : doctors) //retrieve doctors on leave
+        {
+            LeaveEntity onLeave = leaveEntitySessionBeanRemote.retrieveLeaveByDateNDoctorId(doctorEntity.getDoctorId(), dateToday);
+            if(onLeave != null) {
+                doctorsOnLeave.add(doctorEntity);
+            }
+        }
+        
+        for(DoctorEntity onLeave : doctorsOnLeave) //remove the docs on leave 
+        {
+            doctors.remove(onLeave);
+        }
+        
+        System.out.println("Doctor:");
+        System.out.printf("%-3s|%-20s\n", "Id", "Name");
+        
+        for (DoctorEntity doctorEntity : doctors)
+        {
+            String doctorName = doctorEntity.getFirstName() + " " + doctorEntity.getLastName();
+            System.out.printf("%-3s|%-20s\n", doctorEntity.getDoctorId(), doctorName);
+        }
+        System.out.println("");
+        
+        //retrieve latest display time
+        Time threeHoursLater = Time.valueOf(LocalTime.now().plusHours(3));
+        
+        List<String> availableTimeList = new ArrayList<>();
+        if (day >= Calendar.MONDAY && day <= Calendar.WEDNESDAY) 
+        {
+            for (String time : timeSlot) 
+            {
+                time += ":00";
+                Time compareTime = Time.valueOf(time);
+                if (compareTime.compareTo(timeNow) >= 0 && compareTime.compareTo(threeHoursLater) <= 0)
+                {
+                    availableTimeList.add(time);
+                }
+            }   
+        }    
+        else if (day == Calendar.THURSDAY) 
+        {
+            for (String time : timeSlotThur) 
+            {
+                time += ":00";
+                Time compareTime = Time.valueOf(time);
+                if (compareTime.compareTo(timeNow) >= 0 && compareTime.compareTo(threeHoursLater) <= 0)
+                {
+                    availableTimeList.add(time);
+                }
+            }
+        } 
+        else if (day == Calendar.FRIDAY)//Friday
+        {
+            for (String time : timeSlotFri) 
+            {
+                time += ":00";
+                Time compareTime = Time.valueOf(time);
+                if (compareTime.compareTo(timeNow) >= 0 && compareTime.compareTo(threeHoursLater) <= 0)
+                {
+                    availableTimeList.add(time);
+                }    
+            }       
+        }
+
+        System.out.println("Availability:");
+        try
+        {
+            if (availableTimeList.isEmpty())
+            {
+                throw new CreateAppointmentException("No available slots at the moment!\n");
+            }
+            else 
+            {
+                System.out.printf("%-6s|", "Time");
+                for(DoctorEntity doctorEntity : doctors)
+                {
+                    System.out.printf("%-2s|", doctorEntity.getDoctorId());
+                }
+                System.out.print("\n");
+        
+                for (int i = 0; i < availableTimeList.size(); i++)
+                {
+                    String slot = availableTimeList.get(i);
+                    System.out.printf("%-6s|", slot.substring(0, 5));
+                    Time time = java.sql.Time.valueOf(slot);
+                    for (DoctorEntity doctorEntity : doctors) {
+                        AppointmentEntity ap = appointmentEntitySessionBeanRemote.retrieveAppointmentByDoctorIdAndDateAndTime(doctorEntity.getDoctorId(), dateToday, time);
+                        if (ap == null) { // don have appt
+                            System.out.printf("%-2s|", "O");
+                        }
+                        else
+                        {
+                            System.out.printf("%-2s|", "X");                       
+                        }
+                    }
+                    System.out.print("\n");
+                }
+            
+                System.out.print("Enter Doctor Id> ");
+                Long doctorId = scanner.nextLong();
+                scanner.nextLine();
+
+                DoctorEntity doctor = doctorSessionBeanRemote.retrieveDoctorByDoctorId(doctorId);
+                PatientEntity patient = patientSessionBeanRemote.retrievePatientByPatientIdentityNumber(currentPatientEntity.getIdentityNumber());
+
+                //To retrieve earliest free appointment slot
+                String bookingTime = "";
+                List<AppointmentEntity> doctorAppointment = appointmentEntitySessionBeanRemote.retrieveAppointmentByDoctorIdAndDate(doctorId, dateToday);
+                
+                
+                if (doctorAppointment.isEmpty())
+                {
+                    bookingTime = availableTimeList.get(0);
+                }
+                else 
+                {
+                    for (int i = 0; i < availableTimeList.size(); i++) 
+                    {
+                        String timeToCheck = availableTimeList.get(i);
+                        Time input = Time.valueOf(timeToCheck);
+                        AppointmentEntity appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByDoctorIdAndDateAndTime(doctorId, dateToday, input);
+                        if (appointmentEntity == null) {
+                            bookingTime = timeToCheck;
+                            break;
+                        }
+                    }
+                }
+                
+                Time time = Time.valueOf(bookingTime);
+                AppointmentEntity newAppointmentEntity = new AppointmentEntity(doctor, dateToday, time, patient);
+                appointmentEntitySessionBeanRemote.createNewAppointment(newAppointmentEntity);
+                patientSessionBeanRemote.updatePatientList(currentPatientEntity.getIdentityNumber());
+                doctorSessionBeanRemote.updateDoctorList(doctorId);
+
+                String patientName = patient.getFirstName() + " " + patient.getLastName();
+                String doctorName = doctor.getFirstName() + " " + doctor.getLastName();
+
+                System.out.println(patientName + " appointment with Dr. " + doctorName + " has been booked at " + bookingTime.substring(0, 5) + ".");
+                System.out.println("Queue number is: " + queueNo + ".\n");
+                queueNo++;
+            }
+        }
+        catch (CreateAppointmentException ex)
+        {
+            System.out.println(ex.getMessage());
+        }
     }
     
     

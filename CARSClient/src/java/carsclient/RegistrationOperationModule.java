@@ -151,11 +151,11 @@ public class RegistrationOperationModule {
         {
             patientSessionBeanRemote.checkPassword(passwordToHash);
             Long newPatientId = patientSessionBeanRemote.createPatient(newPatientEntity);
-            System.out.println("Patient ID " + newPatientId + " has been added successfully\n");
+            System.out.println("Patient has been registered successfully!\n");
         } 
         catch (PasswordException e) 
         {
-            System.out.println("An error has occured while adding new patient: " + e.getMessage() + "\n");
+            System.out.println("An error has occured while registering new patient: " + e.getMessage() + "\n");
         }   
     }
     

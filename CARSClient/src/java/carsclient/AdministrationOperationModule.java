@@ -198,7 +198,7 @@ public class AdministrationOperationModule
         {
             patientSessionBeanRemote.checkPassword(passwordToHash);
             Long newPatientId = patientSessionBeanRemote.createPatient(newPatientEntity);
-            System.out.println("Patient ID " + newPatientId + " has been added successfully!\n");
+            System.out.println("Patient has been added successfully!\n");
         } 
         catch (PasswordException e) 
         {
@@ -492,7 +492,7 @@ public class AdministrationOperationModule
         newDoctorEntity.setQualifications(scanner.nextLine().trim());
 
         Long newDoctorId = doctorSessionBeanRemote.createNewDoctor(newDoctorEntity);
-        System.out.println(newDoctorId + " Doctor has been added successfully!\n");
+        System.out.println("Doctor has been added successfully!\n");
     }
     
     private void viewDoctorDetails()
@@ -589,7 +589,7 @@ public class AdministrationOperationModule
                 try 
                 {
                     doctorSessionBeanRemote.deleteDoctor(doctorEntity);
-                    System.out.println("Doctoe deleted successfully!\n");
+                    System.out.println("Doctor deleted successfully!\n");
                 } 
                 catch (DoctorNotFoundException | DeleteDoctorException ex) 
                 {
@@ -747,7 +747,7 @@ public class AdministrationOperationModule
         staffEntity.setPassword(scanner.nextLine().trim());
 
         Long newStaffId = staffEntitySessionBeanRemote.createStaffEntity(staffEntity);
-        System.out.println(newStaffId + " Staff has been added successfully!\n");
+        System.out.println("Staff has been added successfully!\n");
     }
     
     private void viewStaffDetails()
