@@ -4,7 +4,6 @@ import ejb.session.stateless.DoctorSessionBeanRemote;
 import ejb.session.stateless.LeaveEntitySessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
 import ejb.session.stateless.StaffEntitySessionBeanRemote;
-import entity.AppointmentEntity;
 import entity.DoctorEntity;
 import entity.GenderEnum;
 import entity.LeaveEntity;
@@ -19,7 +18,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
 import util.exception.AppointmentNotFoundException;
-import util.exception.CreateAppointmentException;
 import util.exception.DeleteDoctorException;
 import util.exception.DeletePatientException;
 import util.exception.DoctorNotFoundException;
@@ -200,11 +198,11 @@ public class AdministrationOperationModule
         {
             patientSessionBeanRemote.checkPassword(passwordToHash);
             Long newPatientId = patientSessionBeanRemote.createPatient(newPatientEntity);
-            System.out.println("Patient ID " + newPatientId + " has been added successfully\n");
+            System.out.println("Patient ID " + newPatientId + " has been added successfully!\n");
         } 
         catch (PasswordException e) 
         {
-            System.out.println("An error has occured while adding new patient: " + e.getMessage() + "\n");
+            System.out.println("An error has occured while adding new patient: " + e.getMessage() + ".\n");
         }   
     }
     
@@ -265,7 +263,7 @@ public class AdministrationOperationModule
         }
         catch(PatientNotFoundException ex)
         {
-            System.out.println("An error has occurred while retrieving patient: " + ex.getMessage() + "\n");
+            System.out.println("An error has occurred while retrieving patient: " + ex.getMessage() + ".\n");
         }
     }
     
@@ -350,7 +348,7 @@ public class AdministrationOperationModule
         }
         catch (UpdatePatientException ex) 
         {
-            System.out.println("An error has occurred while updating patient: " + ex.getMessage() + "\n");
+            System.out.println("An error has occurred while updating patient: " + ex.getMessage() + ".\n");
         }
     }
     
@@ -380,7 +378,7 @@ public class AdministrationOperationModule
                 } 
                 catch (PatientNotFoundException | DeletePatientException ex) 
                 {
-                    System.out.println("An error has occurred while deleting patient: " + ex.getMessage() + "\n");
+                    System.out.println("An error has occurred while deleting patient: " + ex.getMessage() + ".\n");
                 }
             } 
             else 
@@ -390,7 +388,7 @@ public class AdministrationOperationModule
         } 
         catch (PatientNotFoundException ex) 
         {
-            System.out.println("An error has occurred while retrieving patient: " + ex.getMessage() + "\n");
+            System.out.println("An error has occurred while retrieving patient: " + ex.getMessage() + ".\n");
         }
     }
     
@@ -494,7 +492,7 @@ public class AdministrationOperationModule
         newDoctorEntity.setQualifications(scanner.nextLine().trim());
 
         Long newDoctorId = doctorSessionBeanRemote.createNewDoctor(newDoctorEntity);
-        System.out.println(newDoctorId + " Doctor has been added successfully\n");
+        System.out.println(newDoctorId + " Doctor has been added successfully!\n");
     }
     
     private void viewDoctorDetails()
@@ -749,7 +747,7 @@ public class AdministrationOperationModule
         staffEntity.setPassword(scanner.nextLine().trim());
 
         Long newStaffId = staffEntitySessionBeanRemote.createStaffEntity(staffEntity);
-        System.out.println(newStaffId + " Staff has been added successfully\n");
+        System.out.println(newStaffId + " Staff has been added successfully!\n");
     }
     
     private void viewStaffDetails()
