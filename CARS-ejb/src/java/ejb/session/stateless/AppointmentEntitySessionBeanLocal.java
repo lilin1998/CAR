@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.AppointmentEntity;
 import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.AppointmentNotFoundException;
@@ -28,6 +29,8 @@ public interface AppointmentEntitySessionBeanLocal
     public void deleteAppointment(Long appointmentId);
 
     public List<AppointmentEntity> retrieveAppointmentByPatientIdentityNoAndDate(String identityNo, Date date);
+
+    public AppointmentEntity retrieveAppointmentByDoctorIdAndDateAndTime(Long doctorId, Date date, Time time) throws DoctorNotFoundException;
    
 }
 

@@ -7,6 +7,7 @@ import ejb.session.stateless.PatientSessionBeanRemote;
 import entity.AppointmentEntity;
 import entity.DoctorEntity;
 import entity.GenderEnum;
+import entity.LeaveEntity;
 import entity.PatientEntity;
 import entity.StaffEntity;
 import java.security.MessageDigest;
@@ -217,9 +218,22 @@ public class RegistrationOperationModule {
         int day = cal.get(Calendar.DAY_OF_WEEK);
         Time timeNow = Time.valueOf(LocalTime.now());
         
-        //check if doctor on leave
-        
         List<DoctorEntity> doctors = doctorSessionBeanRemote.retrieveAllDoctors();
+        List<DoctorEntity> doctorsOnLeave = new ArrayList<>();
+        
+        for (DoctorEntity doctorEntity : doctors) //retrieve doctors on leave
+        {
+            LeaveEntity onLeave = leaveEntitySessionBeanRemote.retrieveLeaveByDateNDoctorId(doctorEntity.getDoctorId(), dateToday);
+            if(onLeave != null) {
+                doctorsOnLeave.add(doctorEntity);
+            }
+        }
+        
+        for(DoctorEntity onLeave : doctorsOnLeave) //remove the docs on leave 
+        {
+            doctors.remove(onLeave);
+        }
+        
         System.out.println("Doctor:");
         System.out.printf("%-3s|%-20s\n", "Id", "Name");
         
@@ -289,45 +303,18 @@ public class RegistrationOperationModule {
         
                 for (int i = 0; i < availableTimeList.size(); i++)
                 {
-                    System.out.printf("%-6s|", availableTimeList.get(i).substring(0, 5));
-                    for (DoctorEntity doctorEntity : doctors)
-                    {
-                        List<AppointmentEntity> doctorappointment = appointmentEntitySessionBeanRemote.retrieveAppointmentByDoctorIdAndDate(doctorEntity.getDoctorId(), dateToday);
-                        if (doctorappointment.isEmpty())
-                        {
+                    String slot = availableTimeList.get(i);
+                    System.out.printf("%-6s|", slot.substring(0, 5));
+                    Time time = java.sql.Time.valueOf(slot);
+                    for (DoctorEntity doctorEntity : doctors) {
+                        AppointmentEntity ap = appointmentEntitySessionBeanRemote.retrieveAppointmentByDoctorIdAndDateAndTime(doctorEntity.getDoctorId(), dateToday, time);
+                        if (ap == null) { // don have appt
                             System.out.printf("%-2s|", "O");
                         }
-                        else 
+                        else
                         {
-                            for (AppointmentEntity appointment : doctorappointment)
-                            {
-                                if (appointment.getTime().compareTo(timeNow) >= 0)
-                                {
-                                    upcomingappointment.add(appointment);
-                                }
-                            }
-                        
-                            if (upcomingappointment.isEmpty())
-                            {
-                                System.out.printf("%-2s|", "O");
-                            }
-                            else 
-                            {
-                                for (int j = 0; j < upcomingappointment.size(); j++)
-                                {
-                                    String appointmentTime = upcomingappointment.get(j).getTime().toString();
-                                    if (appointmentTime.equals(availableTimeList.get(i)))
-                                    {    
-                                        System.out.printf("%-6s|", "X");
-                                    }
-                                    if (!appointmentTime.equals(availableTimeList.get(i)) && j == upcomingappointment.size() - 1)
-                                    {
-                                    System.out.printf("%-2s|", "O");
-                                    }
-                                }
-                            }
+                            System.out.printf("%-2s|", "X");                       
                         }
-                        upcomingappointment.clear();
                     }
                     System.out.print("\n");
                 }
@@ -353,27 +340,14 @@ public class RegistrationOperationModule {
                 }
                 else 
                 {
-                    for (AppointmentEntity appointment : doctorAppointment)
+                    for (int i = 0; i < availableTimeList.size(); i++) 
                     {
-                        if (appointment.getTime().compareTo(timeNow) >= 0)
-                        {
-                            upcomingappointment.add(appointment);
-                        }
-                    }
-                
-                    if (upcomingappointment.isEmpty())
-                    {
-                        bookingTime = availableTimeList.get(0);
-                    }
-                    else 
-                    {
-                        for (String availableTimeLists : availableTimeList) 
-                        {
-                            String firstunavailableTime = upcomingappointment.get(0).getTime().toString();
-                            if (!availableTimeLists.equals(firstunavailableTime))
-                            {
-                                bookingTime = availableTimeLists;
-                            }
+                        String timeToCheck = availableTimeList.get(i);
+                        Time input = java.sql.Time.valueOf(timeToCheck);
+                        AppointmentEntity appointmentEntity = appointmentEntitySessionBeanRemote.retrieveAppointmentByDoctorIdAndDateAndTime(doctorId, dateToday, input);
+                        if (appointmentEntity == null) {
+                            bookingTime = timeToCheck;
+                            break;
                         }
                     }
                 }

@@ -643,7 +643,7 @@ public class AdministrationOperationModule
 
         //set a week in advance rule
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DAY_OF_MONTH, 7);
+        c.add(Calendar.DAY_OF_MONTH, 6);
         Date aWeekAdvance = new Date((c.getTime()).getTime());      
         
         try //check if doctor exist

@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.AppointmentEntity;
 import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,6 +10,8 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.AppointmentNotFoundException;
@@ -106,6 +109,25 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
         query.setParameter("date", date);
         
         return query.getResultList();
+    }
+    
+    
+    @Override
+    public AppointmentEntity retrieveAppointmentByDoctorIdAndDateAndTime(Long doctorId, Date date, Time time) throws DoctorNotFoundException
+    {
+        Query query = em.createQuery("SELECT DISTINCT a FROM AppointmentEntity a JOIN a.doctorEntity d WHERE d.doctorId = :id AND a.date = :date AND a.time = :time");
+        query.setParameter("id", doctorId);
+        query.setParameter("date", date);
+        query.setParameter("time", time);
+        
+        try 
+        {
+            return (AppointmentEntity)query.getSingleResult();
+        } 
+        catch (NoResultException | NonUniqueResultException ex) 
+        {
+            return null;
+        }
     }
     
     
