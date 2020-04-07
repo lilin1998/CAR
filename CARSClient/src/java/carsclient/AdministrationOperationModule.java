@@ -14,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.sql.Date;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
@@ -172,6 +173,8 @@ public class AdministrationOperationModule
         byte[] salt = getSalt();
         String securePassword = getSecurePassword(passwordToHash, salt);
         newPatientEntity.setPassword(securePassword);
+        String userSalt = Base64.getEncoder().encodeToString(salt);
+        newPatientEntity.setUsersalt(userSalt);
         
         System.out.print("Enter First Name> ");
         newPatientEntity.setFirstName(scanner.nextLine().trim());
@@ -287,6 +290,8 @@ public class AdministrationOperationModule
             byte[] salt = getSalt();
             String securePassword = getSecurePassword(passwordToHash, salt);
             patientEntity.setPassword(securePassword);
+            String userSalt = Base64.getEncoder().encodeToString(salt);
+            patientEntity.setUsersalt(userSalt);
         }
         
         System.out.print("Enter First Name (blank if no change)> ");
@@ -671,7 +676,7 @@ public class AdministrationOperationModule
         } 
     }
     
-    private void staffManagement() throws StaffNotFoundException
+    private void staffManagement() throws StaffNotFoundException, NoSuchAlgorithmException, NoSuchProviderException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -731,7 +736,7 @@ public class AdministrationOperationModule
         }
     }
     
-    private void addStaff() 
+    private void addStaff() throws NoSuchAlgorithmException, NoSuchProviderException 
     {
         Scanner scanner = new Scanner(System.in);
         StaffEntity staffEntity = new StaffEntity();
@@ -744,8 +749,13 @@ public class AdministrationOperationModule
         System.out.print("Enter Username> ");
         staffEntity.setUsername(scanner.nextLine().trim());
         System.out.print("Enter Password> ");
-        staffEntity.setPassword(scanner.nextLine().trim());
-
+        String passwordToHash = scanner.nextLine().trim();
+        byte[] salt = getSalt();
+        String securePassword = getSecurePassword(passwordToHash, salt);
+        staffEntity.setPassword(securePassword);
+        String userSalt = Base64.getEncoder().encodeToString(salt);
+        staffEntity.setUsersalt(userSalt);
+        
         Long newStaffId = staffEntitySessionBeanRemote.createStaffEntity(staffEntity);
         System.out.println("Staff has been added successfully!\n");
     }
@@ -772,7 +782,7 @@ public class AdministrationOperationModule
         }
     }
     
-    private void updateStaff() throws StaffNotFoundException
+    private void updateStaff() throws StaffNotFoundException, NoSuchAlgorithmException, NoSuchProviderException
     {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter Staff ID> ");
@@ -808,7 +818,11 @@ public class AdministrationOperationModule
         input = scanner.nextLine().trim();
         if(input.length() > 0)
         {
-            staffEntity.setPassword(input);
+            byte[] salt = getSalt();
+            String securePassword = getSecurePassword(input, salt);
+            staffEntity.setPassword(securePassword);
+            String userSalt = Base64.getEncoder().encodeToString(salt);
+            staffEntity.setUsersalt(userSalt);
         }
         
         staffEntitySessionBeanRemote.updateStaffEntity(staffEntity);

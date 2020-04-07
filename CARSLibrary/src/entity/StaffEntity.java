@@ -22,6 +22,8 @@ public class StaffEntity implements Serializable {
     private String username;
     @Column(length = 32, nullable = false)
     private String password;
+    @Column(unique = true)
+    private String usersalt;
 
     public StaffEntity() 
     {
@@ -36,14 +38,23 @@ public class StaffEntity implements Serializable {
         this.password = password;
     }
 
-    public StaffEntity(Long staffId, String firstName, String lastName, String username, String password) {
+    public StaffEntity(String firstName, String lastName, String username, String password, String usersalt) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.usersalt = usersalt;
+    }
+
+    public StaffEntity(Long staffId, String firstName, String lastName, String username, String password, String usersalt) {
         this.staffId = staffId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.password = password;
+        this.usersalt = usersalt;
     }
-
+    
     public Long getStaffId() 
     {
         return staffId;
@@ -130,5 +141,13 @@ public class StaffEntity implements Serializable {
     public void setPassword(String password) 
     {
         this.password = password;
+    }
+
+    public String getUsersalt() {
+        return usersalt;
+    }
+
+    public void setUsersalt(String usersalt) {
+        this.usersalt = usersalt;
     }
 }

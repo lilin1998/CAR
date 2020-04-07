@@ -119,10 +119,11 @@ public class MainApp
         
         String passwordToHash = scanner.nextLine().trim();
         byte[] salt = getSalt();
-        String securePassword = getSecurePassword(passwordToHash, salt);
-        newPatientEntity.setPassword(securePassword);
         String userSalt = Base64.getEncoder().encodeToString(salt);
         newPatientEntity.setUsersalt(userSalt);
+        String securePassword = getSecurePassword(passwordToHash, salt);
+        newPatientEntity.setPassword(securePassword);
+        
         
         System.out.print("Enter First Name> ");
         newPatientEntity.setFirstName(scanner.nextLine().trim());
