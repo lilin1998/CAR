@@ -2,6 +2,11 @@ package ejb.session.stateless;
 
 import entity.AppointmentEntity;
 import entity.PatientEntity;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +20,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.DeletePatientException;
+import util.exception.InvalidLoginCredentialException;
 import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
 import util.exception.UpdatePatientException;
@@ -103,6 +109,33 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
     
     
     @Override
+    public PatientEntity patientLogin(String identityNo, String password) throws InvalidLoginCredentialException
+    {
+        try
+        {
+            PatientEntity patientEntity = retrievePatientByPatientIdentityNumber(identityNo);
+            String userSalt = patientEntity.getUsersalt();
+            byte[] salt = Base64.getDecoder().decode(userSalt);
+            String securePassword = getSecurePassword(password, salt);
+        
+            if (securePassword.equals(patientEntity.getPassword()))
+            {
+                return patientEntity;
+            }
+            else
+            {
+                throw new InvalidLoginCredentialException("Password is invalid!");
+            }
+        }
+        catch(PatientNotFoundException ex)
+        {
+            throw new InvalidLoginCredentialException("Username does not exist!");
+        }
+    }
+    
+    
+    
+    @Override
     public void updatePatient(PatientEntity patientEntity) throws UpdatePatientException
     {
         try
@@ -171,5 +204,52 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
         {
             throw new PasswordException("Password is invalid! Please make sure it is a 6 digit number.");
         }
+    }
+    
+    
+    
+    @Override
+    public String getSecurePassword(String passwordToHash, byte[] salt) 
+    {
+        String generatedPassword = null;
+        try 
+        {
+            // Create MessageDigest instance for MD5
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            //Add password bytes to digest
+            md.update(salt);
+            //Get the hash's bytes 
+            byte[] bytes = md.digest(passwordToHash.getBytes());
+            //This bytes[] has bytes in decimal format;
+            //Convert it to hexadecimal format
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i< bytes.length ;i++)
+            {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            //Get complete hashed password in hex format
+            generatedPassword = sb.toString();
+        } 
+        catch (NoSuchAlgorithmException e) 
+        {
+            System.err.println("Exception encountered in getSecurePassword()");
+        }
+        
+        return generatedPassword;
+    }
+    
+    
+    
+    @Override
+    public byte[] getSalt() throws NoSuchAlgorithmException, NoSuchProviderException
+    {
+        //Always use a SecureRandom generator
+        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
+        //Create array for salt
+        byte[] salt = new byte[16];
+        //Get a random salt
+        sr.nextBytes(salt);
+        //return salt
+        return salt;
     }
 }

@@ -10,10 +10,8 @@ import entity.GenderEnum;
 import entity.LeaveEntity;
 import entity.PatientEntity;
 import entity.StaffEntity;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -120,8 +118,8 @@ public class RegistrationOperationModule {
         System.out.print("Enter Password> ");
         
         String passwordToHash = scanner.nextLine().trim();
-        byte[] salt = getSalt();
-        String securePassword = getSecurePassword(passwordToHash, salt);
+        byte[] salt = patientSessionBeanRemote.getSalt();
+        String securePassword = patientSessionBeanRemote.getSecurePassword(passwordToHash, salt);
         newPatientEntity.setPassword(securePassword);
         String userSalt = Base64.getEncoder().encodeToString(salt);
         newPatientEntity.setUsersalt(userSalt);
@@ -130,7 +128,7 @@ public class RegistrationOperationModule {
         newPatientEntity.setFirstName(scanner.nextLine().trim());
         System.out.print("Enter Last Name> ");
         newPatientEntity.setLastName(scanner.nextLine().trim());
-        System.out.print("Enter Gender> ");
+        System.out.print("Enter Gender(M/F)> ");
         if (scanner.nextLine().trim().equals("M")) 
         {
             newPatientEntity.setGender(GenderEnum.M);
@@ -157,49 +155,6 @@ public class RegistrationOperationModule {
         {
             System.out.println("An error has occured while registering new patient: " + e.getMessage() + "\n");
         }   
-    }
-    
-    
-    
-    private static String getSecurePassword(String passwordToHash, byte[] salt)
-    {
-        String generatedPassword = null;
-        try {
-            // Create MessageDigest instance for MD5
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            //Add password bytes to digest
-            md.update(salt);
-            //Get the hash's bytes 
-            byte[] bytes = md.digest(passwordToHash.getBytes());
-            //This bytes[] has bytes in decimal format;
-            //Convert it to hexadecimal format
-            StringBuilder sb = new StringBuilder();
-            for(int i=0; i< bytes.length ;i++)
-            {
-                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-            //Get complete hashed password in hex format
-            generatedPassword = sb.toString();
-        } 
-        catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return generatedPassword;
-    }
-    
-    
-    
-    //Add salt
-    private static byte[] getSalt() throws NoSuchAlgorithmException, NoSuchProviderException
-    {
-        //Always use a SecureRandom generator
-        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
-        //Create array for salt
-        byte[] salt = new byte[16];
-        //Get a random salt
-        sr.nextBytes(salt);
-        //return salt
-        return salt;
     }
     
     

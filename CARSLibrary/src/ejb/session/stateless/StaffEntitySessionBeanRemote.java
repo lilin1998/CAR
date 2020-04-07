@@ -1,10 +1,11 @@
 package ejb.session.stateless;
 
 import entity.StaffEntity;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.List;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.StaffNotFoundException;
-import util.exception.UpdateStaffException;
 
 public interface StaffEntitySessionBeanRemote {
     
@@ -20,5 +21,9 @@ public interface StaffEntitySessionBeanRemote {
 
     public void updateStaffEntity(StaffEntity staffEntity);
 
-    public void deleteStaffEntity(Long staffId);    
+    public void deleteStaffEntity(Long staffId);  
+    
+    public String getSecurePassword(String passwordToHash, byte[] salt);
+    
+    public byte[] getSalt() throws NoSuchAlgorithmException, NoSuchProviderException;
 }

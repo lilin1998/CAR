@@ -6,10 +6,8 @@ import ejb.session.stateless.LeaveEntitySessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
 import entity.GenderEnum;
 import entity.PatientEntity;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Scanner;
 import util.exception.AppointmentNotFoundException;
@@ -118,10 +116,10 @@ public class MainApp
         System.out.print("Enter Password> ");
         
         String passwordToHash = scanner.nextLine().trim();
-        byte[] salt = getSalt();
+        byte[] salt = patientSessionBeanRemote.getSalt();
         String userSalt = Base64.getEncoder().encodeToString(salt);
         newPatientEntity.setUsersalt(userSalt);
-        String securePassword = getSecurePassword(passwordToHash, salt);
+        String securePassword = patientSessionBeanRemote.getSecurePassword(passwordToHash, salt);
         newPatientEntity.setPassword(securePassword);
         
         
@@ -129,7 +127,7 @@ public class MainApp
         newPatientEntity.setFirstName(scanner.nextLine().trim());
         System.out.print("Enter Last Name> ");
         newPatientEntity.setLastName(scanner.nextLine().trim());
-        System.out.print("Enter Gender> ");
+        System.out.print("Enter Gender(M/F)> ");
         if (scanner.nextLine().trim().equals("M")) 
         {
             newPatientEntity.setGender(GenderEnum.M);
@@ -160,52 +158,6 @@ public class MainApp
     
     
     
-    private static String getSecurePassword(String passwordToHash, byte[] salt) 
-    {
-        String generatedPassword = null;
-        try 
-        {
-            // Create MessageDigest instance for MD5
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            //Add password bytes to digest
-            md.update(salt);
-            //Get the hash's bytes 
-            byte[] bytes = md.digest(passwordToHash.getBytes());
-            //This bytes[] has bytes in decimal format;
-            //Convert it to hexadecimal format
-            StringBuilder sb = new StringBuilder();
-            for(int i=0; i< bytes.length ;i++)
-            {
-                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-            //Get complete hashed password in hex format
-            generatedPassword = sb.toString();
-        } 
-        catch (NoSuchAlgorithmException e) 
-        {
-            System.err.println("Exception encountered in getSecurePassword()");
-        }
-        
-        return generatedPassword;
-    }
-     
-    
-    
-    //Add salt
-    private static byte[] getSalt() throws NoSuchAlgorithmException, NoSuchProviderException
-    {
-        //Always use a SecureRandom generator
-        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
-        //Create array for salt
-        byte[] salt = new byte[16];
-        //Get a random salt
-        sr.nextBytes(salt);
-        //return salt
-        return salt;
-    }
-    
-    
-    
     public void doLogin() throws InvalidLoginCredentialException, NoSuchAlgorithmException, NoSuchProviderException, PatientNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
@@ -220,43 +172,12 @@ public class MainApp
         
         if(identityNo.length() > 0 && password.length() > 0)
         {
-            if(verifyLogin(identityNo, password) == true)
-            {
-                currentPatientEntity = patientSessionBeanRemote.retrievePatientByPatientIdentityNumber(identityNo);
-            }
-            else
-            {
-                throw new InvalidLoginCredentialException("Password is invalid!\n");
-            }
+            currentPatientEntity = patientSessionBeanRemote.patientLogin(identityNo, password); 
         }
         else
         {
             throw new InvalidLoginCredentialException("Missing login credential!\n");
         }
-    }
-    
-    
-    
-    public boolean verifyLogin(String identityNo, String password) throws PatientNotFoundException
-    {
-        try 
-        {
-            PatientEntity verifyPatientEntity = patientSessionBeanRemote.retrievePatientByPatientIdentityNumber(identityNo);
-            String userSalt = verifyPatientEntity.getUsersalt();
-            byte[] salt = Base64.getDecoder().decode(userSalt);
-            String securePassword = getSecurePassword(password, salt);
-        
-            if (securePassword.equals(verifyPatientEntity.getPassword()))
-            {
-                return true;
-            }
-        } 
-        catch (PatientNotFoundException ex) 
-        {
-            System.out.println("Patient Identity Number does not exist!");
-        }
-        
-        return false;
     }
     
     
