@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 public class AppointmentEntity implements Serializable 
@@ -99,6 +100,7 @@ public class AppointmentEntity implements Serializable
         serialVersionUID = aSerialVersionUID;
     }
 
+    @XmlTransient
     public DoctorEntity getDoctorEntity() 
     {
         return doctorEntity;
@@ -129,6 +131,7 @@ public class AppointmentEntity implements Serializable
         this.time = time;
     }
 
+    @XmlTransient 
     public PatientEntity getPatientEntity() 
     {
         return patientEntity;
