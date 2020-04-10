@@ -1,11 +1,6 @@
 package ejb.session.stateless;
 
 import entity.StaffEntity;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
-import java.util.Base64;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +14,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.StaffNotFoundException;
+import util.security.CryptographicHelper;
 
 @Stateless
 @Local(StaffEntitySessionBeanLocal.class)
@@ -107,25 +103,23 @@ public class StaffEntitySessionBean implements StaffEntitySessionBeanRemote, Sta
         try
         {
             StaffEntity staffEntity = retrieveStaffByUsername(username);
-            String userSalt = staffEntity.getUsersalt();
-            if (userSalt != null)
+            
+            //to be deleted
+            if (password.equals(staffEntity.getPassword()))
             {
-                byte[] salt = Base64.getDecoder().decode(userSalt);
-                String securePassword = getSecurePassword(password, salt);
-        
-                if (securePassword.equals(staffEntity.getPassword()))
-                {
-                    return staffEntity;
-                }
-                else
-                {
-                    throw new InvalidLoginCredentialException("Password is invalid!");
-                }
-            }
-            else 
-            {
-                staffEntity = retrieveStaffByUsername(username);
                 return staffEntity;
+            }
+            
+            
+            String securePassword = getSecurePassword(password);
+        
+            if (securePassword.equals(staffEntity.getPassword()))
+            {
+                return staffEntity;
+            }
+            else
+            {
+                throw new InvalidLoginCredentialException("Password is invalid!");
             }
         }
         catch(StaffNotFoundException ex)
@@ -146,7 +140,6 @@ public class StaffEntitySessionBean implements StaffEntitySessionBeanRemote, Sta
             s.setLastName(staffEntity.getLastName());
             s.setPassword(staffEntity.getPassword());
             s.setUsername(staffEntity.getUsername());
-            s.setUsersalt(staffEntity.getUsersalt());
 
         } catch (StaffNotFoundException e) {
             Logger.getLogger(StaffEntitySessionBean.class.getName()).log(Level.SEVERE, null, e);
@@ -170,47 +163,10 @@ public class StaffEntitySessionBean implements StaffEntitySessionBeanRemote, Sta
     
     
     @Override
-    public String getSecurePassword(String passwordToHash, byte[] salt) 
+    public String getSecurePassword(String passwordToHash) 
     {
-        String generatedPassword = null;
-        try 
-        {
-            // Create MessageDigest instance for MD5
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            //Add password bytes to digest
-            md.update(salt);
-            //Get the hash's bytes 
-            byte[] bytes = md.digest(passwordToHash.getBytes());
-            //This bytes[] has bytes in decimal format;
-            //Convert it to hexadecimal format
-            StringBuilder sb = new StringBuilder();
-            for(int i=0; i< bytes.length ;i++)
-            {
-                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-            //Get complete hashed password in hex format
-            generatedPassword = sb.toString();
-        } 
-        catch (NoSuchAlgorithmException e) 
-        {
-            System.err.println("Exception encountered in getSecurePassword()");
-        }
+       String hashedPassword = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doSHA1Hashing(passwordToHash));
         
-        return generatedPassword;
-    }
-     
-    
-    
-    @Override
-    public byte[] getSalt() throws NoSuchAlgorithmException, NoSuchProviderException
-    {
-        //Always use a SecureRandom generator
-        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
-        //Create array for salt
-        byte[] salt = new byte[16];
-        //Get a random salt
-        sr.nextBytes(salt);
-        //return salt
-        return salt;
+       return hashedPassword;
     }
 }

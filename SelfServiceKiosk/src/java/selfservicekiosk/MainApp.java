@@ -8,7 +8,6 @@ import entity.GenderEnum;
 import entity.PatientEntity;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.Base64;
 import java.util.Scanner;
 import util.exception.AppointmentNotFoundException;
 import util.exception.DoctorNotFoundException;
@@ -116,10 +115,7 @@ public class MainApp
         System.out.print("Enter Password> ");
         
         String passwordToHash = scanner.nextLine().trim();
-        byte[] salt = patientSessionBeanRemote.getSalt();
-        String userSalt = Base64.getEncoder().encodeToString(salt);
-        newPatientEntity.setUsersalt(userSalt);
-        String securePassword = patientSessionBeanRemote.getSecurePassword(passwordToHash, salt);
+        String securePassword = patientSessionBeanRemote.getSecurePassword(passwordToHash);
         newPatientEntity.setPassword(securePassword);
         
         

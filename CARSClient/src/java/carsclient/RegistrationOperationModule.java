@@ -17,7 +17,6 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
@@ -118,11 +117,8 @@ public class RegistrationOperationModule {
         System.out.print("Enter Password> ");
         
         String passwordToHash = scanner.nextLine().trim();
-        byte[] salt = patientSessionBeanRemote.getSalt();
-        String securePassword = patientSessionBeanRemote.getSecurePassword(passwordToHash, salt);
+        String securePassword = patientSessionBeanRemote.getSecurePassword(passwordToHash);
         newPatientEntity.setPassword(securePassword);
-        String userSalt = Base64.getEncoder().encodeToString(salt);
-        newPatientEntity.setUsersalt(userSalt);
         
         System.out.print("Enter First Name> ");
         newPatientEntity.setFirstName(scanner.nextLine().trim());

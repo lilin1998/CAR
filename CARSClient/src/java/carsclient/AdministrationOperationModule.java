@@ -12,7 +12,6 @@ import entity.StaffEntity;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.sql.Date;
-import java.util.Base64;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
@@ -168,11 +167,8 @@ public class AdministrationOperationModule
         System.out.print("Enter Password> ");
         
         String passwordToHash = scanner.nextLine().trim();
-        byte[] salt = patientSessionBeanRemote.getSalt();
-        String securePassword = patientSessionBeanRemote.getSecurePassword(passwordToHash, salt);
+        String securePassword = patientSessionBeanRemote.getSecurePassword(passwordToHash);
         newPatientEntity.setPassword(securePassword);
-        String userSalt = Base64.getEncoder().encodeToString(salt);
-        newPatientEntity.setUsersalt(userSalt);
         
         System.out.print("Enter First Name> ");
         newPatientEntity.setFirstName(scanner.nextLine().trim());
@@ -214,15 +210,15 @@ public class AdministrationOperationModule
         Scanner scanner = new Scanner(System.in);
         
         System.out.println("*** CARS :: Administration Operation :: View Patient Details***\n");
-        System.out.print("Enter Patient ID> ");
-        Long patientId = scanner.nextLong();
+        System.out.print("Enter Patient Identity Number> ");
+        String patientIdentityNumber = scanner.nextLine().trim();
         
         try
         {
-            PatientEntity patientEntity = patientSessionBeanRemote.retrievePatientByPatientId(patientId);
-            System.out.printf("%-15s|%-20s|%-30s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n", "Patient ID", "Identity Number", "Password", "First Name", "Last Name", "Gender", "Age", "Phone", "Address");
-            System.out.printf("%-15s|%-20s|%-30s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n", patientEntity.getPatientId().toString(), patientEntity.getIdentityNumber(), patientEntity.getPassword(), patientEntity.getFirstName(), patientEntity.getLastName(), patientEntity.getGender().toString(), patientEntity.getAge().toString(), patientEntity.getPhone(), patientEntity.getAddress());         
-            System.out.println("------------------------");
+            PatientEntity patientEntity = patientSessionBeanRemote.retrievePatientByPatientIdentityNumber(patientIdentityNumber);
+            System.out.printf("%-15s|%-20s|%-50s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n", "Patient ID", "Identity Number", "Password", "First Name", "Last Name", "Gender", "Age", "Phone", "Address");
+            System.out.printf("%-15s|%-20s|%-50s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n", patientEntity.getPatientId().toString(), patientEntity.getIdentityNumber(), patientEntity.getPassword(), patientEntity.getFirstName(), patientEntity.getLastName(), patientEntity.getGender().toString(), patientEntity.getAge().toString(), patientEntity.getPhone(), patientEntity.getAddress());         
+            System.out.println("------------------------\n");
 
         }
         catch(PatientNotFoundException ex)
@@ -248,11 +244,8 @@ public class AdministrationOperationModule
         if(input.length() > 0)
         {
             String passwordToHash = input;
-            byte[] salt = patientSessionBeanRemote.getSalt();
-            String securePassword = patientSessionBeanRemote.getSecurePassword(passwordToHash, salt);
+            String securePassword = patientSessionBeanRemote.getSecurePassword(passwordToHash);
             patientEntity.setPassword(securePassword);
-            String userSalt = Base64.getEncoder().encodeToString(salt);
-            patientEntity.setUsersalt(userSalt);
         }
         
         System.out.print("Enter First Name (blank if no change)> ");
@@ -321,16 +314,13 @@ public class AdministrationOperationModule
     private void deletePatient() throws DeletePatientException 
     {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter Patient ID> ");
-        Long patientId = scanner.nextLong();
-
+        System.out.print("Enter Patient Identity Number> ");
+        String patientIdentityNo = scanner.nextLine().trim();
         String input;
-        
-        scanner.nextLine();
 
         try 
         {
-            PatientEntity patientEntity = patientSessionBeanRemote.retrievePatientByPatientId(patientId);
+            PatientEntity patientEntity = patientSessionBeanRemote.retrievePatientByPatientIdentityNumber(patientIdentityNo);
             System.out.println("*** CARS :: Administration Operation :: Delete Patient ***\n");
             System.out.printf("Confirm Delete Patient %s (Identity Number: %s) (Enter 'Y' to Delete)> ", patientEntity.getFirstName(), patientEntity.getIdentityNumber());
             input = scanner.nextLine().trim();
@@ -366,14 +356,14 @@ public class AdministrationOperationModule
         System.out.println("*** CARS :: Administration Operation :: View All Patients ***\n");
         
         List<PatientEntity> patientEntities = patientSessionBeanRemote.retrieveAllPatients();
-        System.out.printf("%-15s|%-20s|%-30s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n", "Patient ID", "Identity Number", "Password", "First Name", "Last Name", "Gender", "Age", "Phone", "Address");
+        System.out.printf("%-15s|%-20s|%-50s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n", "Patient ID", "Identity Number", "Password", "First Name", "Last Name", "Gender", "Age", "Phone", "Address");
 
         for(PatientEntity patientEntity:patientEntities)
         {
-            System.out.printf("%-15s|%-20s|%-30s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n", patientEntity.getPatientId().toString(), patientEntity.getIdentityNumber(), patientEntity.getPassword(), patientEntity.getFirstName(), patientEntity.getLastName(), patientEntity.getGender().toString(), patientEntity.getAge().toString(), patientEntity.getPhone(), patientEntity.getAddress());         
+            System.out.printf("%-15s|%-20s|%-50s|%-20s|%-20s|%-20s|%-20s|%-20s|%-20s\n", patientEntity.getPatientId().toString(), patientEntity.getIdentityNumber(), patientEntity.getPassword(), patientEntity.getFirstName(), patientEntity.getLastName(), patientEntity.getGender().toString(), patientEntity.getAge().toString(), patientEntity.getPhone(), patientEntity.getAddress());         
         }
         
-        System.out.print("Press any key to continue...> ");
+        System.out.print("Press any key to continue...> \n");
         scanner.nextLine();
     }
     
@@ -474,7 +464,7 @@ public class AdministrationOperationModule
             DoctorEntity doctorEntity = doctorSessionBeanRemote.retrieveDoctorByDoctorId(doctorId);
             System.out.printf("%-15s|%-20s|%-20s|%-20s|%-20s\n", "Doctor ID", "First Name", "Last Name", "Registration", "Qualification");
             System.out.printf("%-15s|%-20s|%-20s|%-20s|%-20s\n", doctorEntity.getDoctorId().toString(), doctorEntity.getFirstName(), doctorEntity.getLastName(), doctorEntity.getRegistration(), doctorEntity.getQualifications());         
-            System.out.println("------------------------");
+            System.out.println("------------------------\n");
 
         }
         catch(DoctorNotFoundException ex)
@@ -587,7 +577,7 @@ public class AdministrationOperationModule
             System.out.printf("%-15s|%-20s|%-20s|%-20s|%-20s\n", doctorEntity.getDoctorId().toString(), doctorEntity.getFirstName(), doctorEntity.getLastName(), doctorEntity.getRegistration(), doctorEntity.getQualifications());         
         }
         
-        System.out.print("Press any key to continue...> ");
+        System.out.print("Press any key to continue...> \n");
         scanner.nextLine();
     }
     
@@ -711,11 +701,8 @@ public class AdministrationOperationModule
         staffEntity.setUsername(scanner.nextLine().trim());
         System.out.print("Enter Password> ");
         String passwordToHash = scanner.nextLine().trim();
-        byte[] salt = staffEntitySessionBeanRemote.getSalt();
-        String securePassword = staffEntitySessionBeanRemote.getSecurePassword(passwordToHash, salt);
+        String securePassword = staffEntitySessionBeanRemote.getSecurePassword(passwordToHash);
         staffEntity.setPassword(securePassword);
-        String userSalt = Base64.getEncoder().encodeToString(salt);
-        staffEntity.setUsersalt(userSalt);
         
         Long newStaffId = staffEntitySessionBeanRemote.createStaffEntity(staffEntity);
         System.out.println("Staff has been added successfully!\n");
@@ -732,9 +719,9 @@ public class AdministrationOperationModule
         try
         {
             StaffEntity staffEntity = staffEntitySessionBeanRemote.retrieveStaffEntityByStaffId(staffId);
-            System.out.printf("%-15s|%-20s|%-30s|%-20s|%-20s\n", "Doctor ID", "First Name", "Last Name", "Username", "Password");
-            System.out.printf("%-15s|%-20s|%-30s|%-20s|%-20s\n", staffEntity.getStaffId().toString(), staffEntity.getFirstName(), staffEntity.getLastName(), staffEntity.getUsername(), staffEntity.getPassword());         
-            System.out.println("------------------------");
+            System.out.printf("%-15s|%-20s|%-30s|%-20s|%-50s\n", "Doctor ID", "First Name", "Last Name", "Username", "Password");
+            System.out.printf("%-15s|%-20s|%-30s|%-20s|%-50s\n", staffEntity.getStaffId().toString(), staffEntity.getFirstName(), staffEntity.getLastName(), staffEntity.getUsername(), staffEntity.getPassword());         
+            System.out.println("------------------------\n");
 
         }
         catch(StaffNotFoundException ex)
@@ -779,11 +766,8 @@ public class AdministrationOperationModule
         input = scanner.nextLine().trim();
         if(input.length() > 0)
         {
-            byte[] salt = staffEntitySessionBeanRemote.getSalt();
-            String securePassword = staffEntitySessionBeanRemote.getSecurePassword(input, salt);
+            String securePassword = staffEntitySessionBeanRemote.getSecurePassword(input);
             staffEntity.setPassword(securePassword);
-            String userSalt = Base64.getEncoder().encodeToString(salt);
-            staffEntity.setUsersalt(userSalt);
         }
         
         staffEntitySessionBeanRemote.updateStaffEntity(staffEntity);
@@ -830,14 +814,14 @@ public class AdministrationOperationModule
         System.out.println("*** CARS :: Administration Operation :: View All Staffs ***\n");
         
         List<StaffEntity> staffEntities = staffEntitySessionBeanRemote.retrieveAllStaffs();
-        System.out.printf("%-15s|%-20s|%-20s|%-20s|%-20s\n", "Staff ID", "First Name", "Last Name", "Username", "Password");
+        System.out.printf("%-15s|%-20s|%-20s|%-20s|%-50s\n", "Staff ID", "First Name", "Last Name", "Username", "Password");
 
         for(StaffEntity staffEntity : staffEntities)
         {
-            System.out.printf("%-15s|%-20s|%-20s|%-20s|%-20s\n", staffEntity.getStaffId().toString(), staffEntity.getFirstName(), staffEntity.getLastName(), staffEntity.getUsername(), staffEntity.getPassword());         
+            System.out.printf("%-15s|%-20s|%-20s|%-20s|%-50s\n", staffEntity.getStaffId().toString(), staffEntity.getFirstName(), staffEntity.getLastName(), staffEntity.getUsername(), staffEntity.getPassword());         
         }
         
-        System.out.print("Press any key to continue...> ");
+        System.out.print("Press any key to continue...> \n");
         scanner.nextLine();
     }
 }

@@ -2,11 +2,6 @@ package ejb.session.stateless;
 
 import entity.AppointmentEntity;
 import entity.PatientEntity;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
-import java.util.Base64;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +19,7 @@ import util.exception.InvalidLoginCredentialException;
 import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
 import util.exception.UpdatePatientException;
+import util.security.CryptographicHelper;
 
 
 @Stateless
@@ -114,9 +110,7 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
         try
         {
             PatientEntity patientEntity = retrievePatientByPatientIdentityNumber(identityNo);
-            String userSalt = patientEntity.getUsersalt();
-            byte[] salt = Base64.getDecoder().decode(userSalt);
-            String securePassword = getSecurePassword(password, salt);
+            String securePassword = getSecurePassword(password);
         
             if (securePassword.equals(patientEntity.getPassword()))
             {
@@ -147,7 +141,6 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
                 p.setLastName(patientEntity.getLastName());
                 p.setAge(patientEntity.getAge());
                 p.setPassword(patientEntity.getPassword());
-                p.setUsersalt(patientEntity.getUsersalt());
                 p.setGender(patientEntity.getGender());
                 p.setAge(patientEntity.getAge());
                 p.setPhone(patientEntity.getPhone());
@@ -209,47 +202,12 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
     
     
     @Override
-    public String getSecurePassword(String passwordToHash, byte[] salt) 
+    public String getSecurePassword(String passwordToHash) 
     {
-        String generatedPassword = null;
-        try 
-        {
-            // Create MessageDigest instance for MD5
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            //Add password bytes to digest
-            md.update(salt);
-            //Get the hash's bytes 
-            byte[] bytes = md.digest(passwordToHash.getBytes());
-            //This bytes[] has bytes in decimal format;
-            //Convert it to hexadecimal format
-            StringBuilder sb = new StringBuilder();
-            for(int i=0; i< bytes.length ;i++)
-            {
-                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-            //Get complete hashed password in hex format
-            generatedPassword = sb.toString();
-        } 
-        catch (NoSuchAlgorithmException e) 
-        {
-            System.err.println("Exception encountered in getSecurePassword()");
-        }
+        String hashedPassword = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doSHA1Hashing(passwordToHash));
         
-        return generatedPassword;
-    }
-    
-    
-    
-    @Override
-    public byte[] getSalt() throws NoSuchAlgorithmException, NoSuchProviderException
-    {
-        //Always use a SecureRandom generator
-        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
-        //Create array for salt
-        byte[] salt = new byte[16];
-        //Get a random salt
-        sr.nextBytes(salt);
-        //return salt
-        return salt;
+        return hashedPassword;
     }
 }
+    
+    

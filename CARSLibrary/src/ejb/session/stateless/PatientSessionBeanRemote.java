@@ -1,8 +1,6 @@
 package ejb.session.stateless;
 
 import entity.PatientEntity;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.List;
 import util.exception.DeletePatientException;
 import util.exception.InvalidLoginCredentialException;
@@ -30,7 +28,5 @@ public interface PatientSessionBeanRemote
     
     public void checkPassword(String password) throws PasswordException;
     
-    public String getSecurePassword(String passwordToHash, byte[] salt);
-
-    public byte[] getSalt() throws NoSuchAlgorithmException, NoSuchProviderException;
+    public String getSecurePassword(String passwordToHash);
 }
