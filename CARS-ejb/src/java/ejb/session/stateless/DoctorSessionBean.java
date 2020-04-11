@@ -11,11 +11,10 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.AppointmentNotFoundException;
+import util.exception.CreateDoctorException;
 import util.exception.DeleteDoctorException;
 import util.exception.DoctorNotFoundException;
 import util.exception.LeaveApplicationException;
@@ -152,4 +151,34 @@ public class DoctorSessionBean implements DoctorSessionBeanRemote, DoctorSession
         List<AppointmentEntity> doctorAppointment = doctorEntity.getdoctorAppointments();
         doctorEntity.setDoctorAppointments(doctorAppointment);
     }
+    
+    
+    
+    @Override
+     public void inputIsIncorrect(DoctorEntity doctorEntity) throws CreateDoctorException
+     {
+         Boolean incorrect = false;
+        
+        if ("".equals(doctorEntity.getQualifications()) || " ".equals(doctorEntity.getQualifications()))
+        {
+            incorrect = true;
+        }
+        else if ("".equals(doctorEntity.getFirstName()) || " ".equals(doctorEntity.getFirstName()))
+        {
+            incorrect = true;
+        }
+        else if ("".equals(doctorEntity.getLastName()) || " ".equals(doctorEntity.getLastName()))
+        {
+            incorrect = true;
+        }
+        else if ("".equals(doctorEntity.getRegistration()) || " ".equals(doctorEntity.getRegistration()))
+        {
+            incorrect = true;
+        }
+        
+        if (incorrect == true)
+        {
+            throw new CreateDoctorException("Incorrect input field!");
+        }
+     }
 }

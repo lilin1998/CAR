@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
 import util.exception.CreateAppointmentException;
+import util.exception.CreatePatientException;
 import util.exception.DoctorNotFoundException;
 import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
@@ -114,7 +115,7 @@ public class RegistrationOperationModule {
         System.out.println("*** CARS :: Registration Operation :: Add New Patient ***\n");
         System.out.print("Enter Identity Number> ");
         newPatientEntity.setIdentityNumber(scanner.nextLine().trim());
-        System.out.print("Enter Password> ");
+        System.out.print("Enter 6-digit Password> ");
         
         String passwordToHash = scanner.nextLine().trim();
         String securePassword = patientSessionBeanRemote.getSecurePassword(passwordToHash);
@@ -140,17 +141,25 @@ public class RegistrationOperationModule {
         newPatientEntity.setPhone(scanner.nextLine().trim());
         System.out.print("Enter Address> ");
         newPatientEntity.setAddress(scanner.nextLine().trim());
-
+        
         try 
         {
-            patientSessionBeanRemote.checkPassword(passwordToHash);
-            Long newPatientId = patientSessionBeanRemote.createPatient(newPatientEntity);
-            System.out.println("Patient has been registered successfully!\n");
+            patientSessionBeanRemote.inputIsIncorrect(newPatientEntity);
+            try 
+            {
+                patientSessionBeanRemote.checkPassword(passwordToHash);
+                Long newPatientId = patientSessionBeanRemote.createPatient(newPatientEntity);
+                System.out.println("Patient has been registered successfully!\n");
+            } 
+            catch (PasswordException e) 
+            {
+                System.out.println("An error has occured while registering new patient: " + e.getMessage() + "\n");
+            }     
         } 
-        catch (PasswordException e) 
+        catch (CreatePatientException ex) 
         {
-            System.out.println("An error has occured while registering new patient: " + e.getMessage() + "\n");
-        }   
+            System.out.println(ex.getMessage());
+        }
     }
     
     

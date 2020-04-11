@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.StaffEntity;
 import java.util.List;
+import util.exception.CreateStaffException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.StaffNotFoundException;
 
@@ -22,4 +23,6 @@ public interface StaffEntitySessionBeanLocal {
     public void deleteStaffEntity(Long staffId);       
 
     public String getSecurePassword(String passwordToHash);
+
+    public void inputIsIncorrect(StaffEntity staffEntity) throws CreateStaffException;
 }

@@ -12,6 +12,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.CreateStaffException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.StaffNotFoundException;
 import util.security.CryptographicHelper;
@@ -168,5 +169,35 @@ public class StaffEntitySessionBean implements StaffEntitySessionBeanRemote, Sta
        String hashedPassword = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doSHA1Hashing(passwordToHash));
         
        return hashedPassword;
+    }
+    
+    
+    
+    @Override
+    public void inputIsIncorrect(StaffEntity staffEntity) throws CreateStaffException
+    {
+        Boolean incorrect = false;
+        
+        if ("".equals(staffEntity.getFirstName()) || " ".equals(staffEntity.getFirstName()))
+        {
+            incorrect = true;
+        }
+        else if ("".equals(staffEntity.getLastName()) || " ".equals(staffEntity.getLastName()))
+        {
+            incorrect = true;
+        }
+        else if ("".equals(staffEntity.getUsername()) || " ".equals(staffEntity.getUsername()))
+        {
+            incorrect = true;
+        }
+        else if ("".equals(staffEntity.getPassword()) || " ".equals(staffEntity.getPassword()))
+        {
+            incorrect = true;
+        }
+        
+        if (incorrect == true)
+        {
+            throw new CreateStaffException("Incorrect input field!");
+        }
     }
 }

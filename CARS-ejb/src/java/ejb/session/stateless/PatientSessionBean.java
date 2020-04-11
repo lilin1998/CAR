@@ -14,6 +14,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.CreatePatientException;
 import util.exception.DeletePatientException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.PasswordException;
@@ -207,6 +208,53 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
         String hashedPassword = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doSHA1Hashing(passwordToHash));
         
         return hashedPassword;
+    }
+    
+    
+    
+    
+    @Override
+    public void inputIsIncorrect(PatientEntity patientEntity) throws CreatePatientException
+    {
+        boolean incorrect = false;
+        
+        if ("".equals(patientEntity.getAddress()) || " ".equals(patientEntity.getAddress()))
+        {
+            incorrect = true;
+        }
+        else if ("".equals(patientEntity.getFirstName()) || " ".equals(patientEntity.getFirstName()))
+        {
+            incorrect = true;
+        }
+        else if ("".equals(patientEntity.getLastName()) || " ".equals(patientEntity.getLastName()))
+        {
+            incorrect = true;
+        }
+        else if ("".equals(patientEntity.getIdentityNumber()) || " ".equals(patientEntity.getIdentityNumber()))
+        {
+            incorrect = true;
+        }
+        else if ("".equals(patientEntity.getPassword()) || " ".equals(patientEntity.getPassword()))
+        {
+            incorrect = true;
+        }
+        else if ("".equals(patientEntity.getPhone()) || " ".equals(patientEntity.getPhone()))
+        {
+            incorrect = true;
+        }
+        else if (patientEntity.getGender() == null)
+        {
+            incorrect = true;
+        }
+        else if (patientEntity.getAge() == null)
+        {
+            incorrect = true;
+        }
+        
+        if (incorrect == true)
+        {
+            throw new CreatePatientException("Incorrect input field!");
+        }
     }
 }
     

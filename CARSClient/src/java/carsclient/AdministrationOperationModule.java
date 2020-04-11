@@ -16,6 +16,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
 import util.exception.AppointmentNotFoundException;
+import util.exception.CreateDoctorException;
+import util.exception.CreatePatientException;
+import util.exception.CreateStaffException;
 import util.exception.DeleteDoctorException;
 import util.exception.DeletePatientException;
 import util.exception.DoctorNotFoundException;
@@ -164,7 +167,7 @@ public class AdministrationOperationModule
         System.out.println("*** CARS :: Administration Operation :: Add New Patient ***\n");
         System.out.print("Enter Identity Number> ");
         newPatientEntity.setIdentityNumber(scanner.nextLine().trim());
-        System.out.print("Enter Password> ");
+        System.out.print("Enter 6-digit Password> ");
         
         String passwordToHash = scanner.nextLine().trim();
         String securePassword = patientSessionBeanRemote.getSecurePassword(passwordToHash);
@@ -191,16 +194,24 @@ public class AdministrationOperationModule
         System.out.print("Enter Address> ");
         newPatientEntity.setAddress(scanner.nextLine().trim());
 
-        try 
+         try 
         {
-            patientSessionBeanRemote.checkPassword(passwordToHash);
-            Long newPatientId = patientSessionBeanRemote.createPatient(newPatientEntity);
-            System.out.println("Patient has been added successfully!\n");
+            patientSessionBeanRemote.inputIsIncorrect(newPatientEntity);
+            try 
+            {
+                patientSessionBeanRemote.checkPassword(passwordToHash);
+                Long newPatientId = patientSessionBeanRemote.createPatient(newPatientEntity);
+                System.out.println("Patient has been registered successfully!\n");
+            } 
+            catch (PasswordException e) 
+            {
+                System.out.println("An error has occured while registering new patient: " + e.getMessage() + "\n");
+            }     
         } 
-        catch (PasswordException e) 
+        catch (CreatePatientException ex) 
         {
-            System.out.println("An error has occured while adding new patient: " + e.getMessage() + ".\n");
-        }   
+            System.out.println(ex.getMessage());
+        }
     }
     
     
@@ -447,8 +458,17 @@ public class AdministrationOperationModule
         System.out.print("Enter Qualification> ");
         newDoctorEntity.setQualifications(scanner.nextLine().trim());
 
-        Long newDoctorId = doctorSessionBeanRemote.createNewDoctor(newDoctorEntity);
-        System.out.println("Doctor has been added successfully!\n");
+        try 
+        {
+            doctorSessionBeanRemote.inputIsIncorrect(newDoctorEntity);
+            Long newDoctorId = doctorSessionBeanRemote.createNewDoctor(newDoctorEntity);
+            System.out.println("Doctor has been added successfully!\n");
+        } 
+        catch (CreateDoctorException ex) 
+        {
+            System.out.println(ex.getMessage());
+        }
+        
     }
     
     private void viewDoctorDetails()
@@ -704,8 +724,16 @@ public class AdministrationOperationModule
         String securePassword = staffEntitySessionBeanRemote.getSecurePassword(passwordToHash);
         staffEntity.setPassword(securePassword);
         
-        Long newStaffId = staffEntitySessionBeanRemote.createStaffEntity(staffEntity);
-        System.out.println("Staff has been added successfully!\n");
+        try {
+            staffEntitySessionBeanRemote.inputIsIncorrect(staffEntity);
+            
+            Long newStaffId = staffEntitySessionBeanRemote.createStaffEntity(staffEntity);
+            System.out.println("Staff has been added successfully!\n");
+        } 
+        catch (CreateStaffException ex) 
+        {
+            System.out.println(ex.getMessage());
+        }
     }
     
     private void viewStaffDetails()

@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.PatientEntity;
 import java.util.List;
+import util.exception.CreatePatientException;
 import util.exception.DeletePatientException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.PasswordException;
@@ -29,4 +30,6 @@ public interface PatientSessionBeanLocal
     public void checkPassword(String password) throws PasswordException;
 
     public String getSecurePassword(String passwordToHash);
+   
+    public void inputIsIncorrect(PatientEntity patientEntity) throws CreatePatientException;
 }

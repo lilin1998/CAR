@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Scanner;
 import util.exception.AppointmentNotFoundException;
+import util.exception.CreatePatientException;
 import util.exception.DoctorNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.LeaveApplicationException;
@@ -112,7 +113,7 @@ public class MainApp
         System.out.println("*** Self-Service Kiosk :: Register ***\n");
         System.out.print("Enter Identity Number> ");
         newPatientEntity.setIdentityNumber(scanner.nextLine().trim());
-        System.out.print("Enter Password> ");
+        System.out.print("Enter 6-digit Password> ");
         
         String passwordToHash = scanner.nextLine().trim();
         String securePassword = patientSessionBeanRemote.getSecurePassword(passwordToHash);
@@ -140,16 +141,24 @@ public class MainApp
         System.out.print("Enter Address> ");
         newPatientEntity.setAddress(scanner.nextLine().trim());
 
-        try 
+         try 
         {
-            patientSessionBeanRemote.checkPassword(passwordToHash);
-            Long newPatientId = patientSessionBeanRemote.createPatient(newPatientEntity);
-            System.out.println("Registration is successful!\n");
+            patientSessionBeanRemote.inputIsIncorrect(newPatientEntity);
+            try 
+            {
+                patientSessionBeanRemote.checkPassword(passwordToHash);
+                Long newPatientId = patientSessionBeanRemote.createPatient(newPatientEntity);
+                System.out.println("Patient has been registered successfully!\n");
+            } 
+            catch (PasswordException e) 
+            {
+                System.out.println("An error has occured while registering new patient: " + e.getMessage() + "\n");
+            }     
         } 
-        catch (PasswordException e) 
+        catch (CreatePatientException ex) 
         {
-            System.out.println("An error has occured while adding new patient: " + e.getMessage() + "\n");
-        }  
+            System.out.println(ex.getMessage());
+        }
     }
     
     
@@ -163,7 +172,7 @@ public class MainApp
         System.out.println("*** Self-Service Kiosk :: Login ***\n");
         System.out.print("Enter Identity Number> ");
         identityNo = scanner.nextLine().trim();
-        System.out.print("Enter password> ");
+        System.out.print("Enter 6-digit password> ");
         password = scanner.nextLine().trim();
         
         if(identityNo.length() > 0 && password.length() > 0)

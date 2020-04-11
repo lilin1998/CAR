@@ -1,9 +1,8 @@
 package util.exception;
 
-
-
 public class InvalidLoginCredentialException extends Exception
 {
+    
     public InvalidLoginCredentialException()
     {
     }

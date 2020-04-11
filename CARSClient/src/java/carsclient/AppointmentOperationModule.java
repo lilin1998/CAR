@@ -164,7 +164,7 @@ public class AppointmentOperationModule
         System.out.print("Enter Doctor Id> ");
         doctorId = scanner.nextLong();
         scanner.nextLine();
-        System.out.print("Enter Date> ");
+        System.out.print("Enter Date(YYYY-MM-DD)> ");
         date = scanner.nextLine();
         System.out.println("");
 
@@ -322,7 +322,7 @@ public class AppointmentOperationModule
                         }
                         
                         System.out.println("");
-                        System.out.print("Enter Time> ");
+                        System.out.print("Enter Time(HH:MM)> ");
                         String timeInput = scanner.nextLine().trim();
                         String timeformat = timeInput + ":00";
                         Time time = Time.valueOf(timeformat);

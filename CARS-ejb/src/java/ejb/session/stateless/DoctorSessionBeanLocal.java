@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.AppointmentNotFoundException;
+import util.exception.CreateDoctorException;
 import util.exception.DeleteDoctorException;
 import util.exception.DoctorNotFoundException;
 import util.exception.LeaveApplicationException;
@@ -27,4 +28,5 @@ public interface DoctorSessionBeanLocal {
     
     public void checkAppointmentSchedule(Long doctorId, Date date) throws LeaveApplicationException, DoctorNotFoundException;
 
+    public void inputIsIncorrect(DoctorEntity doctorEntity) throws CreateDoctorException;
 }
