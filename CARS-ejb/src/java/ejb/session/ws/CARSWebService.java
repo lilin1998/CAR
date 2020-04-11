@@ -10,6 +10,9 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
 import util.exception.AppointmentNotFoundException;
+import util.exception.InputDataValidationException;
+import util.exception.PatientIdentityNumberExist;
+import util.exception.UnknownPersistenceException;
 
 @WebService(serviceName = "CARSWebService")
 @Stateless()
@@ -38,7 +41,7 @@ public class CARSWebService {
                               @WebParam(name = "Gender") GenderEnum gender, 
                               @WebParam(name = "Age") Integer age,
                               @WebParam(name = "Phone") String phone, 
-                              @WebParam(name = "Address") String address)
+                              @WebParam(name = "Address") String address) throws PatientIdentityNumberExist, UnknownPersistenceException, InputDataValidationException
     {
 //        GenderEnum setGender;
 //        if(gender.equals("M"))

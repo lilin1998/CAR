@@ -3,7 +3,9 @@ package ejb.session.stateless;
 import ejb.session.stateful.AppointmentEntitySessionBeanLocal;
 import entity.AppointmentEntity;
 import entity.PatientEntity;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -14,12 +16,20 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.CreatePatientException;
 import util.exception.DeletePatientException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.PasswordException;
+import util.exception.PatientIdentityNumberExist;
 import util.exception.PatientNotFoundException;
+import util.exception.UnknownPersistenceException;
 import util.exception.UpdatePatientException;
 import util.security.CryptographicHelper;
 
@@ -32,31 +42,57 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
     @PersistenceContext(unitName = "CARS-ejbPU")
     private EntityManager em;
     
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
     @EJB
     private AppointmentEntitySessionBeanLocal appointmentEntitySessionBeanLocal;
 
     public PatientSessionBean() 
     {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
    
     
     
     @Override
-    public Long createPatient(PatientEntity newPatientEntity)
+    public Long createPatient(PatientEntity newPatientEntity) throws PatientIdentityNumberExist, UnknownPersistenceException, InputDataValidationException
     {
-        em.persist(newPatientEntity);
-        em.flush();
-        PatientEntity p = null;
-        
-        try 
+        try
         {
-            p = retrievePatientByPatientId(newPatientEntity.getPatientId());
+            Set<ConstraintViolation<PatientEntity>> constraintViolation = validator.validate(newPatientEntity);
+            
+            if(constraintViolation.isEmpty())
+            {    
+                em.persist(newPatientEntity);
+                em.flush();
+                
+                return newPatientEntity.getPatientId();
+            }
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolation));
+            }
         }
-        catch(PatientNotFoundException ex)
+        catch(PersistenceException ex)
         {
-            Logger.getLogger(PatientSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+            if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+            {
+                if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                {
+                    throw new PatientIdentityNumberExist("Patient is already registered!");
+                }
+                else
+                {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
+            else
+            {
+                throw new UnknownPersistenceException(ex.getMessage());
+            }
         }
-        return p.getPatientId();
     }
     
     
@@ -132,29 +168,40 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
     
     
     @Override
-    public void updatePatient(PatientEntity patientEntity) throws UpdatePatientException
-    {
-        try
+    public void updatePatient(PatientEntity patientEntity) throws UpdatePatientException, PatientNotFoundException, InputDataValidationException
+    {        
+         if(patientEntity != null && patientEntity.getPatientId() != null)
         {
-            PatientEntity p = retrievePatientByPatientId(patientEntity.getPatientId());
-            if (p.getIdentityNumber().equals(patientEntity.getIdentityNumber()))
+            Set<ConstraintViolation<PatientEntity>>constraintViolations = validator.validate(patientEntity);
+        
+            if(constraintViolations.isEmpty())
             {
-                p.setFirstName(patientEntity.getFirstName());
-                p.setLastName(patientEntity.getLastName());
-                p.setAge(patientEntity.getAge());
-                p.setPassword(patientEntity.getPassword());
-                p.setGender(patientEntity.getGender());
-                p.setAge(patientEntity.getAge());
-                p.setPhone(patientEntity.getPhone());
-                p.setAddress(patientEntity.getAddress());
+                PatientEntity p = retrievePatientByPatientId(patientEntity.getPatientId());
+                
+                if (p.getIdentityNumber().equals(patientEntity.getIdentityNumber()))
+                {
+                    p.setFirstName(patientEntity.getFirstName());
+                    p.setLastName(patientEntity.getLastName());
+                    p.setAge(patientEntity.getAge());
+                    p.setPassword(patientEntity.getPassword());
+                    p.setGender(patientEntity.getGender());
+                    p.setAge(patientEntity.getAge());
+                    p.setPhone(patientEntity.getPhone());
+                    p.setAddress(patientEntity.getAddress());
+                }
+                else
+                {
+                    throw new UpdatePatientException("Identity Number of staff patient record to be updated does not match the existing record");
+                }
             }
-            else {
-                throw new UpdatePatientException("Identity Number provided does not match the existing patient record!");
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
-        catch (PatientNotFoundException ex)
+        else
         {
-            Logger.getLogger(PatientSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new PatientNotFoundException("Patient Identity Number not provided for patient to be updated");
         }
     }
     
@@ -256,6 +303,19 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
         {
             throw new CreatePatientException("Incorrect input field!");
         }
+    }
+    
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<PatientEntity>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
     }
 }
     

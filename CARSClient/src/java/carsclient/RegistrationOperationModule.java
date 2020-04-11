@@ -25,9 +25,12 @@ import java.util.Scanner;
 import util.exception.CreateAppointmentException;
 import util.exception.CreatePatientException;
 import util.exception.DoctorNotFoundException;
+import util.exception.InputDataValidationException;
 import util.exception.PasswordException;
+import util.exception.PatientIdentityNumberExist;
 import util.exception.PatientNotFoundException;
 import util.exception.QueueNotFoundException;
+import util.exception.UnknownPersistenceException;
 
 public class RegistrationOperationModule {
     private DoctorSessionBeanRemote doctorSessionBeanRemote;
@@ -60,8 +63,8 @@ public class RegistrationOperationModule {
     }
     
     
-    
-    public void registrationOperation() throws NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DoctorNotFoundException, PatientNotFoundException, CreateAppointmentException, QueueNotFoundException
+
+    public void registrationOperation() throws NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DoctorNotFoundException, PatientNotFoundException, CreateAppointmentException, PatientIdentityNumberExist, UnknownPersistenceException, InputDataValidationException, QueueNotFoundException
     {
         
         Scanner scanner = new Scanner(System.in);
@@ -113,7 +116,7 @@ public class RegistrationOperationModule {
     
     
     
-    private void registerNewPatient() throws NoSuchAlgorithmException, NoSuchProviderException, PasswordException 
+    private void registerNewPatient() throws NoSuchAlgorithmException, NoSuchProviderException, PasswordException, PatientIdentityNumberExist, UnknownPersistenceException, InputDataValidationException 
     {
         Scanner scanner = new Scanner(System.in);
         PatientEntity newPatientEntity = new PatientEntity();
@@ -160,7 +163,11 @@ public class RegistrationOperationModule {
             catch (PasswordException e) 
             {
                 System.out.println("An error has occured while registering new patient: " + e.getMessage() + "\n");
-            }     
+            }  
+            catch (PatientIdentityNumberExist e)
+            {
+                System.out.println("It seems like: " + e.getMessage() + "\n");
+            }
         } 
         catch (CreatePatientException ex) 
         {

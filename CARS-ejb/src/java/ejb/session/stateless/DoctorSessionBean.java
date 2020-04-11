@@ -5,6 +5,7 @@ import entity.AppointmentEntity;
 import entity.DoctorEntity;
 import java.sql.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -13,12 +14,20 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.AppointmentNotFoundException;
 import util.exception.CreateDoctorException;
 import util.exception.DeleteDoctorException;
 import util.exception.DoctorNotFoundException;
+import util.exception.DoctorRegistrationExistException;
+import util.exception.InputDataValidationException;
 import util.exception.LeaveApplicationException;
+import util.exception.UnknownPersistenceException;
 import util.exception.UpdateDoctorException;
 
 @Stateless
@@ -29,31 +38,57 @@ public class DoctorSessionBean implements DoctorSessionBeanRemote, DoctorSession
     @PersistenceContext(unitName = "CARS-ejbPU")
     private EntityManager em;
     
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
     @EJB
     private AppointmentEntitySessionBeanLocal appointmentEntitySessionBeanLocal; 
     
     public DoctorSessionBean() 
     {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
     
     
     
     @Override
-    public Long createNewDoctor(DoctorEntity newDoctorEntity) 
+    public Long createNewDoctor(DoctorEntity newDoctorEntity) throws DoctorRegistrationExistException, UnknownPersistenceException, InputDataValidationException
     {
-        em.persist(newDoctorEntity);
-        em.flush();
-        DoctorEntity d = null;
-        try 
+        try
         {
-            d = retrieveDoctorByDoctorId(newDoctorEntity.getDoctorId());
-        } 
-        catch (DoctorNotFoundException e) 
-        {
-            Logger.getLogger(DoctorSessionBean.class.getName()).log(Level.SEVERE, null, e);
+            Set<ConstraintViolation<DoctorEntity>> constraintViolation = validator.validate(newDoctorEntity);
+            
+            if(constraintViolation.isEmpty())
+            {    
+                em.persist(newDoctorEntity);
+                em.flush();
+                
+                return newDoctorEntity.getDoctorId();
+            }
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolation));
+            }
         }
-        
-        return d.getDoctorId();
+        catch(PersistenceException ex)
+        {
+            if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+            {
+                if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                {
+                    throw new DoctorRegistrationExistException("Doctor is already registered!");
+                }
+                else
+                {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
+            else
+            {
+                throw new UnknownPersistenceException(ex.getMessage());
+            }
+        }
     }
     
     
@@ -69,27 +104,33 @@ public class DoctorSessionBean implements DoctorSessionBeanRemote, DoctorSession
     
     
     @Override
-    public void updateDoctor(DoctorEntity doctorEntity) throws UpdateDoctorException, DoctorNotFoundException
-    {
-        if(doctorEntity.getDoctorId()!= null)
+    public void updateDoctor(DoctorEntity doctorEntity) throws UpdateDoctorException, DoctorNotFoundException, InputDataValidationException
+    {        
+        if(doctorEntity != null && doctorEntity.getDoctorId() != null)
         {
-            DoctorEntity doctorEntityToUpdate = retrieveDoctorByDoctorId(doctorEntity.getDoctorId());
-            
-            if(doctorEntityToUpdate.getDoctorId().equals(doctorEntity.getDoctorId()))
+            Set<ConstraintViolation<DoctorEntity>>constraintViolations = validator.validate(doctorEntity);
+        
+            if(constraintViolations.isEmpty())
             {
-                doctorEntityToUpdate.setFirstName(doctorEntity.getFirstName());
-                doctorEntityToUpdate.setLastName(doctorEntity.getLastName());
-                doctorEntityToUpdate.setQualifications(doctorEntity.getQualifications());
-                doctorEntityToUpdate.setRegistration(doctorEntity.getRegistration());
+                DoctorEntity d = retrieveDoctorByDoctorId(doctorEntity.getDoctorId());
+
+                if (d.getDoctorId().equals(doctorEntity.getDoctorId())) {
+                    d.setFirstName(doctorEntity.getFirstName());
+                    d.setLastName(doctorEntity.getLastName());
+                    d.setQualifications(doctorEntity.getQualifications());
+                    d.setRegistration(doctorEntity.getRegistration());
+                } else {
+                    throw new UpdateDoctorException("ID of doctor record to be updated does not match the existing record");
+                }
             }
             else
             {
-                throw new UpdateDoctorException("ID of doctor record to be updated does not match the existing record");
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         }
         else
         {
-            throw new DoctorNotFoundException("Doctor ID not provided for product to be updated");
+            throw new DoctorNotFoundException("Doctor ID not provided for doctor to be updated");
         }
     }
     
@@ -182,4 +223,16 @@ public class DoctorSessionBean implements DoctorSessionBeanRemote, DoctorSession
             throw new CreateDoctorException("Incorrect input field!");
         }
      }
+     
+     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<DoctorEntity>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
+    }
 }

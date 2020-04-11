@@ -23,7 +23,7 @@ public class DoctorEntity implements Serializable
     private String firstName; 
     @Column(length = 32, nullable = false)
     private String lastName;
-    @Column(length = 6, nullable = false)
+    @Column(length = 6, nullable = false, unique = true)
     private String registration; 
     @Column(length = 32, nullable = false)
     private String qualifications;

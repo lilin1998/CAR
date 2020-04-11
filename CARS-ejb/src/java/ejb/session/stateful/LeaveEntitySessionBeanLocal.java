@@ -3,7 +3,6 @@ package ejb.session.stateful;
 import entity.LeaveEntity;
 import java.sql.Date;
 import java.util.List;
-import javax.ejb.Local;
 import util.exception.DoctorNotFoundException;
 import util.exception.LeaveApplicationException;
 

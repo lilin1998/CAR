@@ -7,18 +7,21 @@ import util.exception.AppointmentNotFoundException;
 import util.exception.CreateDoctorException;
 import util.exception.DeleteDoctorException;
 import util.exception.DoctorNotFoundException;
+import util.exception.DoctorRegistrationExistException;
+import util.exception.InputDataValidationException;
 import util.exception.LeaveApplicationException;
+import util.exception.UnknownPersistenceException;
 import util.exception.UpdateDoctorException;
 
 public interface DoctorSessionBeanLocal {
     
-    public Long createNewDoctor(DoctorEntity newDoctorEntity);
+    public Long createNewDoctor(DoctorEntity newDoctorEntity) throws DoctorRegistrationExistException, UnknownPersistenceException, InputDataValidationException;
 
     public List<DoctorEntity> retrieveAllDoctors();
 
     public DoctorEntity retrieveDoctorByDoctorId(Long doctorId) throws DoctorNotFoundException;
     
-    public void updateDoctor(DoctorEntity doctorEntity) throws UpdateDoctorException, DoctorNotFoundException;
+    public void updateDoctor(DoctorEntity doctorEntity) throws UpdateDoctorException, DoctorNotFoundException, InputDataValidationException;
 
     public void deleteDoctor(DoctorEntity doctorEntity) throws DeleteDoctorException, DoctorNotFoundException, AppointmentNotFoundException;
 

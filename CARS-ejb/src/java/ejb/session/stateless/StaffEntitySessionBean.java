@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.StaffEntity;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Local;
@@ -11,10 +12,18 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.CreateStaffException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.StaffNotFoundException;
+import util.exception.StaffUsernameExistException;
+import util.exception.UnknownPersistenceException;
 import util.security.CryptographicHelper;
 
 @Stateless
@@ -25,30 +34,54 @@ public class StaffEntitySessionBean implements StaffEntitySessionBeanRemote, Sta
     @PersistenceContext(unitName = "CARS-ejbPU")
     private EntityManager em;
 
-    
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
     
     public StaffEntitySessionBean() 
     {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
     
     
     
     @Override
-    public Long createStaffEntity(StaffEntity newStaffEntity) 
+    public Long createStaffEntity(StaffEntity newStaffEntity) throws StaffUsernameExistException, UnknownPersistenceException, InputDataValidationException
     {
-        em.persist(newStaffEntity);
-        em.flush();
-        StaffEntity s = null;
-        try 
+        try
         {
-            s = retrieveStaffEntityByStaffId(newStaffEntity.getStaffId());
-        } 
-        catch (StaffNotFoundException e) 
-        {
-            Logger.getLogger(StaffEntitySessionBean.class.getName()).log(Level.SEVERE, null, e);
+            Set<ConstraintViolation<StaffEntity>> constraintViolation = validator.validate(newStaffEntity);
+            
+            if(constraintViolation.isEmpty())
+            {    
+                em.persist(newStaffEntity);
+                em.flush();
+                
+                return newStaffEntity.getStaffId();
+            }
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolation));
+            }
         }
-        
-        return s.getStaffId();
+        catch(PersistenceException ex)
+        {
+            if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+            {
+                if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                {
+                    throw new StaffUsernameExistException("Staff is already registered!");
+                }
+                else
+                {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            }
+            else
+            {
+                throw new UnknownPersistenceException(ex.getMessage());
+            }
+        }
     }
     
     
@@ -132,18 +165,28 @@ public class StaffEntitySessionBean implements StaffEntitySessionBeanRemote, Sta
     
     
     @Override
-    public void updateStaffEntity(StaffEntity staffEntity)
-    {
-        try 
+    public void updateStaffEntity(StaffEntity staffEntity) throws StaffNotFoundException, InputDataValidationException
+    {        
+        if(staffEntity != null && staffEntity.getStaffId() != null)
         {
-            StaffEntity s = retrieveStaffEntityByStaffId(staffEntity.getStaffId());
-            s.setFirstName(staffEntity.getFirstName());
-            s.setLastName(staffEntity.getLastName());
-            s.setPassword(staffEntity.getPassword());
-            s.setUsername(staffEntity.getUsername());
-
-        } catch (StaffNotFoundException e) {
-            Logger.getLogger(StaffEntitySessionBean.class.getName()).log(Level.SEVERE, null, e);
+            Set<ConstraintViolation<StaffEntity>>constraintViolations = validator.validate(staffEntity);
+        
+            if(constraintViolations.isEmpty())
+            {
+                StaffEntity s = retrieveStaffEntityByStaffId(staffEntity.getStaffId());
+                s.setFirstName(staffEntity.getFirstName());
+                s.setLastName(staffEntity.getLastName());
+                s.setPassword(staffEntity.getPassword());
+                s.setUsername(staffEntity.getUsername());
+            }
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        }
+        else
+        {
+            throw new StaffNotFoundException("Staff ID not provided for staff to be updated");
         }
     }
 
@@ -199,5 +242,17 @@ public class StaffEntitySessionBean implements StaffEntitySessionBeanRemote, Sta
         {
             throw new CreateStaffException("Incorrect input field!");
         }
+    }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<StaffEntity>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
     }
 }

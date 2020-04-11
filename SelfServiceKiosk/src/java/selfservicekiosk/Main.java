@@ -10,9 +10,12 @@ import java.security.NoSuchProviderException;
 import javax.ejb.EJB;
 import util.exception.AppointmentNotFoundException;
 import util.exception.DoctorNotFoundException;
+import util.exception.InputDataValidationException;
 import util.exception.LeaveApplicationException;
+import util.exception.PatientIdentityNumberExist;
 import util.exception.PatientNotFoundException;
 import util.exception.QueueNotFoundException;
+import util.exception.UnknownPersistenceException;
 
 public class Main 
 {
@@ -27,7 +30,7 @@ public class Main
     @EJB
     private static QueueSessionBeanRemote queueSessionBeanRemote;
     
-    public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException, DoctorNotFoundException, AppointmentNotFoundException, PatientNotFoundException, LeaveApplicationException, QueueNotFoundException 
+    public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException, DoctorNotFoundException, AppointmentNotFoundException, PatientNotFoundException, LeaveApplicationException, PatientIdentityNumberExist, UnknownPersistenceException, InputDataValidationException, QueueNotFoundException
     {
        MainApp mainApp = new MainApp(doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote, leaveEntitySessionBeanRemote, queueSessionBeanRemote);
         mainApp.runApp();
