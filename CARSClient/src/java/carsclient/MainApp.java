@@ -8,16 +8,22 @@ import ejb.session.stateless.StaffEntitySessionBeanRemote;
 import entity.StaffEntity;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.sql.SQLException;
 import java.util.Scanner;
 import util.exception.AppointmentNotFoundException;
 import util.exception.CreateAppointmentException;
 import util.exception.DeletePatientException;
 import util.exception.DoctorNotFoundException;
+import util.exception.DoctorRegistrationExistException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.LeaveApplicationException;
 import util.exception.PasswordException;
+import util.exception.PatientIdentityNumberExist;
 import util.exception.PatientNotFoundException;
 import util.exception.StaffNotFoundException;
+import util.exception.StaffUsernameExistException;
+import util.exception.UnknownPersistenceException;
 import util.exception.UpdatePatientException;
 
 public class MainApp 
@@ -54,7 +60,7 @@ public class MainApp
     
    
     
-    public void runApp() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException, CreateAppointmentException
+    public void runApp() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException, CreateAppointmentException, SQLException, PatientIdentityNumberExist, UnknownPersistenceException, InputDataValidationException, StaffUsernameExistException, DoctorRegistrationExistException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -132,7 +138,7 @@ public class MainApp
     
     
     
-    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException, CreateAppointmentException
+    private void menuMain() throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException, CreateAppointmentException, SQLException, PatientIdentityNumberExist, UnknownPersistenceException, InputDataValidationException, StaffUsernameExistException, DoctorRegistrationExistException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;

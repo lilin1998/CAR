@@ -4,12 +4,10 @@ import entity.AppointmentEntity;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
-import javax.ejb.Local;
 import util.exception.AppointmentNotFoundException;
 import util.exception.DoctorNotFoundException;
 import util.exception.PatientNotFoundException;
 
-@Local
 public interface AppointmentEntitySessionBeanLocal 
 {    
     public AppointmentEntity createNewAppointment(AppointmentEntity newAppointmentEntity); 

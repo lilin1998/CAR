@@ -22,10 +22,15 @@ import util.exception.CreateStaffException;
 import util.exception.DeleteDoctorException;
 import util.exception.DeletePatientException;
 import util.exception.DoctorNotFoundException;
+import util.exception.DoctorRegistrationExistException;
+import util.exception.InputDataValidationException;
 import util.exception.LeaveApplicationException;
 import util.exception.PasswordException;
+import util.exception.PatientIdentityNumberExist;
 import util.exception.PatientNotFoundException;
 import util.exception.StaffNotFoundException;
+import util.exception.StaffUsernameExistException;
+import util.exception.UnknownPersistenceException;
 import util.exception.UpdateDoctorException;
 import util.exception.UpdatePatientException;
 
@@ -49,7 +54,7 @@ public class AdministrationOperationModule
         this.leaveEntitySessionBeanRemote = leaveEntitySessionBeanRemote;
     }
     
-    public void administrationOperation() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, StaffNotFoundException, AppointmentNotFoundException, DoctorNotFoundException, LeaveApplicationException
+    public void administrationOperation() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, StaffNotFoundException, AppointmentNotFoundException, DoctorNotFoundException, LeaveApplicationException, PatientIdentityNumberExist, UnknownPersistenceException, InputDataValidationException, StaffUsernameExistException, DoctorRegistrationExistException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -98,7 +103,7 @@ public class AdministrationOperationModule
         }
     }
     
-    private void patientManagement() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException
+    private void patientManagement() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, PatientIdentityNumberExist, UnknownPersistenceException, InputDataValidationException
     {
     
         Scanner scanner = new Scanner(System.in);
@@ -159,7 +164,7 @@ public class AdministrationOperationModule
         }
     }
     
-    private void addPatient() throws NoSuchAlgorithmException, NoSuchProviderException, PasswordException 
+    private void addPatient() throws NoSuchAlgorithmException, NoSuchProviderException, PasswordException, PatientIdentityNumberExist, UnknownPersistenceException, InputDataValidationException 
     {
         Scanner scanner = new Scanner(System.in);
         PatientEntity newPatientEntity = new PatientEntity();
@@ -200,13 +205,18 @@ public class AdministrationOperationModule
             try 
             {
                 patientSessionBeanRemote.checkPassword(passwordToHash);
+//                patientSessionBeanRemote.retrievePatientByPatientId(newPatientEntity.getIdentityNumber());
                 Long newPatientId = patientSessionBeanRemote.createPatient(newPatientEntity);
                 System.out.println("Patient has been registered successfully!\n");
             } 
+            catch (PatientIdentityNumberExist | InputDataValidationException e)
+            {
+                System.out.println("it seems like: " + e.getMessage() + "\n");
+            }
             catch (PasswordException e) 
             {
                 System.out.println("An error has occured while registering new patient: " + e.getMessage() + "\n");
-            }     
+            } 
         } 
         catch (CreatePatientException ex) 
         {
@@ -238,7 +248,7 @@ public class AdministrationOperationModule
         }
     }
     
-    private void updatePatient() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException
+    private void updatePatient() throws PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter Patient Identity Number to update details of the patient> ");
@@ -378,7 +388,7 @@ public class AdministrationOperationModule
         scanner.nextLine();
     }
     
-        private void doctorManagement() throws AppointmentNotFoundException, DoctorNotFoundException, LeaveApplicationException
+        private void doctorManagement() throws AppointmentNotFoundException, DoctorNotFoundException, LeaveApplicationException, InputDataValidationException, DoctorRegistrationExistException, UnknownPersistenceException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -443,7 +453,7 @@ public class AdministrationOperationModule
         }
     }
     
-    private void addDoctor() 
+    private void addDoctor() throws DoctorRegistrationExistException, UnknownPersistenceException, InputDataValidationException 
     {
         Scanner scanner = new Scanner(System.in);
         DoctorEntity newDoctorEntity = new DoctorEntity();
@@ -464,7 +474,7 @@ public class AdministrationOperationModule
             Long newDoctorId = doctorSessionBeanRemote.createNewDoctor(newDoctorEntity);
             System.out.println("Doctor has been added successfully!\n");
         } 
-        catch (CreateDoctorException ex) 
+        catch (CreateDoctorException | DoctorRegistrationExistException | InputDataValidationException ex) 
         {
             System.out.println(ex.getMessage());
         }
@@ -493,7 +503,7 @@ public class AdministrationOperationModule
         }
     }
     
-    private void updateDoctor() throws DoctorNotFoundException
+    private void updateDoctor() throws DoctorNotFoundException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter Doctor ID> ");
@@ -647,7 +657,7 @@ public class AdministrationOperationModule
         } 
     }
     
-    private void staffManagement() throws StaffNotFoundException, NoSuchAlgorithmException, NoSuchProviderException
+    private void staffManagement() throws StaffNotFoundException, NoSuchAlgorithmException, NoSuchProviderException, StaffUsernameExistException, UnknownPersistenceException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -707,7 +717,7 @@ public class AdministrationOperationModule
         }
     }
     
-    private void addStaff() throws NoSuchAlgorithmException, NoSuchProviderException 
+    private void addStaff() throws NoSuchAlgorithmException, NoSuchProviderException, StaffUsernameExistException, UnknownPersistenceException, InputDataValidationException 
     {
         Scanner scanner = new Scanner(System.in);
         StaffEntity staffEntity = new StaffEntity();
@@ -730,7 +740,7 @@ public class AdministrationOperationModule
             Long newStaffId = staffEntitySessionBeanRemote.createStaffEntity(staffEntity);
             System.out.println("Staff has been added successfully!\n");
         } 
-        catch (CreateStaffException ex) 
+        catch (CreateStaffException | StaffUsernameExistException | InputDataValidationException ex) 
         {
             System.out.println(ex.getMessage());
         }
@@ -797,9 +807,15 @@ public class AdministrationOperationModule
             String securePassword = staffEntitySessionBeanRemote.getSecurePassword(input);
             staffEntity.setPassword(securePassword);
         }
-        
-        staffEntitySessionBeanRemote.updateStaffEntity(staffEntity);
-        System.out.println("Staff updated successfully!\n");
+        try 
+        {
+            staffEntitySessionBeanRemote.updateStaffEntity(staffEntity);
+            System.out.println("Staff updated successfully!\n");
+        } 
+        catch (InputDataValidationException | StaffNotFoundException ex) 
+        {
+            System.out.println("An error has occurred while updating staff: " + ex.getMessage() + "\n");
+        }
     }
     
     private void deleteStaff() throws StaffNotFoundException  

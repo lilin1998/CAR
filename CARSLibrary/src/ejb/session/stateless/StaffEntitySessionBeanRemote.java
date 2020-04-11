@@ -3,12 +3,15 @@ package ejb.session.stateless;
 import entity.StaffEntity;
 import java.util.List;
 import util.exception.CreateStaffException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.StaffNotFoundException;
+import util.exception.StaffUsernameExistException;
+import util.exception.UnknownPersistenceException;
 
 public interface StaffEntitySessionBeanRemote {
     
-    public Long createStaffEntity(StaffEntity newStaffEntity);
+    public Long createStaffEntity(StaffEntity newStaffEntity) throws StaffUsernameExistException, UnknownPersistenceException, InputDataValidationException;
     
     public List<StaffEntity> retrieveAllStaffs();    
     
@@ -18,7 +21,7 @@ public interface StaffEntitySessionBeanRemote {
     
     public StaffEntity staffLogin(String username, String password) throws InvalidLoginCredentialException;
 
-    public void updateStaffEntity(StaffEntity staffEntity);
+    public void updateStaffEntity(StaffEntity staffEntity) throws StaffNotFoundException, InputDataValidationException;
 
     public void deleteStaffEntity(Long staffId);  
     

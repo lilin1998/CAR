@@ -12,10 +12,13 @@ import java.util.Scanner;
 import util.exception.AppointmentNotFoundException;
 import util.exception.CreatePatientException;
 import util.exception.DoctorNotFoundException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.LeaveApplicationException;
 import util.exception.PasswordException;
+import util.exception.PatientIdentityNumberExist;
 import util.exception.PatientNotFoundException;
+import util.exception.UnknownPersistenceException;
 
 public class MainApp 
 {
@@ -48,7 +51,7 @@ public class MainApp
 
     
     
-    public void runApp() throws NoSuchAlgorithmException, NoSuchProviderException, DoctorNotFoundException, AppointmentNotFoundException, PatientNotFoundException, LeaveApplicationException
+    public void runApp() throws NoSuchAlgorithmException, NoSuchProviderException, DoctorNotFoundException, AppointmentNotFoundException, PatientNotFoundException, LeaveApplicationException, PatientIdentityNumberExist, UnknownPersistenceException, InputDataValidationException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -105,7 +108,7 @@ public class MainApp
     
     
     
-    public void doRegister() throws NoSuchAlgorithmException, NoSuchProviderException
+    public void doRegister() throws NoSuchAlgorithmException, NoSuchProviderException, PatientIdentityNumberExist, UnknownPersistenceException, InputDataValidationException, PatientIdentityNumberExist
     {
         Scanner scanner = new Scanner(System.in);
         PatientEntity newPatientEntity = new PatientEntity();
@@ -150,7 +153,7 @@ public class MainApp
                 Long newPatientId = patientSessionBeanRemote.createPatient(newPatientEntity);
                 System.out.println("Patient has been registered successfully!\n");
             } 
-            catch (PasswordException e) 
+            catch (PasswordException |PatientIdentityNumberExist | InputDataValidationException e) 
             {
                 System.out.println("An error has occured while registering new patient: " + e.getMessage() + "\n");
             }     
