@@ -335,20 +335,23 @@ public class RegistrationOperationModule {
                 String doctorName = doctor.getFirstName() + " " + doctor.getLastName();
 
                 System.out.println(patientName + " appointment with Dr. " + doctorName + " has been booked at " + bookingTime.substring(0, 5) + ".");
-                
+
                 List<QueueEntity> currentQueue = queueSessionBeanRemote.retrieveQueueByDate(dateToday);
                 if (currentQueue.isEmpty())
                 {
-                    List<QueueEntity> pastQueueRecord = queueSessionBeanRemote.retrieveAllQueues();
-                    for(QueueEntity queueEntity : pastQueueRecord)
-                    { 
-                        queueSessionBeanRemote.deleteQueue(queueEntity.getQueueId());
-                    }
+                    int resetQueueNumber = queueSessionBeanRemote.resetQueueNumber();
+                    QueueEntity newQueueEntity = new QueueEntity(resetQueueNumber, dateToday);
+                    queueSessionBeanRemote.createQueue(newQueueEntity);
+                    System.out.println("Queue number is: " + newQueueEntity.getQueueNumber() + ".\n"); 
                 }
-                QueueEntity newQueueEntity = new QueueEntity(dateToday);
-                queueSessionBeanRemote.createQueue(newQueueEntity);
-                List<QueueEntity> updatedQueue = queueSessionBeanRemote.retrieveQueueByDate(dateToday);
-                System.out.println("Queue number is: " + updatedQueue.get(0).getQueueId() + ".\n"); 
+                else 
+                {
+                    int newQueueNumber = queueSessionBeanRemote.updateQueueNumber(dateToday);
+                    QueueEntity newQueueEntity = new QueueEntity(newQueueNumber, dateToday);
+                    queueSessionBeanRemote.createQueue(newQueueEntity);
+   
+                    System.out.println("Queue number is: " + newQueueEntity.getQueueNumber() + ".\n");
+                } 
             }
         }
         catch (CreateAppointmentException ex)
@@ -401,20 +404,22 @@ public class RegistrationOperationModule {
                     String timeString = appointmentEntity.getTime().toString();
                     String patientName = appointmentEntity.getPatientEntity().getFirstName() + " " + appointmentEntity.getPatientEntity().getLastName();
                     System.out.println(patientName + " appointment is confirmed with " + doctorName + " at " + timeString.substring(0, 5) + ".");
-                    
+                   
                     List<QueueEntity> currentQueue = queueSessionBeanRemote.retrieveQueueByDate(todayDate);
                     if (currentQueue.isEmpty())
                     {
-                        List<QueueEntity> pastQueueRecord = queueSessionBeanRemote.retrieveAllQueues();
-                        for(QueueEntity queueEntity : pastQueueRecord)
-                        { 
-                            queueSessionBeanRemote.deleteQueue(queueEntity.getQueueId());
-                        }
+                        int resetQueueNumber = queueSessionBeanRemote.resetQueueNumber();
+                        QueueEntity newQueueEntity = new QueueEntity(resetQueueNumber, todayDate);
+                        queueSessionBeanRemote.createQueue(newQueueEntity);
+                        System.out.println("Queue number is: " + newQueueEntity.getQueueNumber() + ".\n"); 
                     }
-                    QueueEntity newQueueEntity = new QueueEntity(todayDate);
-                    queueSessionBeanRemote.createQueue(newQueueEntity);
-                    List<QueueEntity> updatedQueue = queueSessionBeanRemote.retrieveQueueByDate(todayDate);
-                    System.out.println("Queue number is: " + updatedQueue.get(0).getQueueId() + ".\n"); 
+                    else 
+                    {
+                        int newQueueNumber = queueSessionBeanRemote.updateQueueNumber(todayDate);
+                        QueueEntity newQueueEntity = new QueueEntity(newQueueNumber, todayDate);
+                        queueSessionBeanRemote.createQueue(newQueueEntity);
+                        System.out.println("Queue number is: " + newQueueEntity.getQueueNumber() + ".\n"); 
+                    }
                 }
             }
         }  

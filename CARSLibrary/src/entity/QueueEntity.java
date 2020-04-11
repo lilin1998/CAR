@@ -2,6 +2,7 @@ package entity;
 
 import java.io.Serializable;
 import java.sql.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +19,8 @@ public class QueueEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long queueId;
+    @Column(nullable = false)
+    private int queueNumber;
     private Date queueDate;
 
     public QueueEntity() {
@@ -27,10 +30,14 @@ public class QueueEntity implements Serializable {
         this.queueDate = queueDate;
     }
 
-    public QueueEntity(Long id, Date queueDate) {
-        this();
-        
-        this.queueId = id;
+    public QueueEntity(int queueNumber, Date queueDate) {
+        this.queueNumber = queueNumber;
+        this.queueDate = queueDate;
+    }
+
+    public QueueEntity(Long queueId, int queueNumber, Date queueDate) {
+        this.queueId = queueId;
+        this.queueNumber = queueNumber;
         this.queueDate = queueDate;
     }
 
@@ -65,6 +72,14 @@ public class QueueEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.QueueEntity[ id=" + queueId + " ]";
+    }
+
+    public int getQueueNumber() {
+        return queueNumber;
+    }
+
+    public void setQueueNumber(int queueNumber) {
+        this.queueNumber = queueNumber;
     }
 
     public Date getQueueDate() {

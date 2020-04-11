@@ -91,4 +91,23 @@ public class QueueSessionBean implements QueueSessionBeanRemote, QueueSessionBea
         QueueEntity queueEntityToRemove = retrieveQueueByQueueId(queueId);
         em.remove(queueEntityToRemove);
     }
+    
+    
+    
+    @Override
+    public int updateQueueNumber(Date todayDate) throws QueueNotFoundException
+    {
+        List<QueueEntity> queueList = retrieveQueueByDate(todayDate);
+        QueueEntity latestQueue = queueList.get(0);
+        
+        return latestQueue.getQueueNumber() + 1;
+    }
+    
+    
+    
+    @Override
+    public int resetQueueNumber()
+    {
+        return 1;
+    }
 }

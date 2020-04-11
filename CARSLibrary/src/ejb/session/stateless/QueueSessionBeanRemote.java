@@ -16,4 +16,8 @@ public interface QueueSessionBeanRemote
     public List<QueueEntity> retrieveQueueByDate(Date todayDate) throws QueueNotFoundException;
     
     public void deleteQueue(Long queueId) throws QueueNotFoundException;
+    
+    public int updateQueueNumber(Date todayDate) throws QueueNotFoundException;
+    
+    public int resetQueueNumber();
 }
