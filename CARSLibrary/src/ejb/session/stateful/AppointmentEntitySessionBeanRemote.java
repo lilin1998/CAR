@@ -1,16 +1,16 @@
-package ejb.session.stateless;
+package ejb.session.stateful;
 
 import entity.AppointmentEntity;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
-import javax.ejb.Local;
+import javax.ejb.Remote;
 import util.exception.AppointmentNotFoundException;
 import util.exception.DoctorNotFoundException;
 import util.exception.PatientNotFoundException;
 
-@Local
-public interface AppointmentEntitySessionBeanLocal 
+@Remote
+public interface AppointmentEntitySessionBeanRemote 
 {
     public AppointmentEntity createNewAppointment(AppointmentEntity newAppointmentEntity); 
 
@@ -31,9 +31,4 @@ public interface AppointmentEntitySessionBeanLocal
     public List<AppointmentEntity> retrieveAppointmentByPatientIdentityNoAndDate(String identityNo, Date date);
 
     public AppointmentEntity retrieveAppointmentByDoctorIdAndDateAndTime(Long doctorId, Date date, Time time) throws DoctorNotFoundException;
-   
 }
-
-    
-
-

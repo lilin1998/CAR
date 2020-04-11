@@ -1,7 +1,7 @@
 package carsclient;
 
 import ejb.session.stateless.DoctorSessionBeanRemote;
-import ejb.session.stateless.LeaveEntitySessionBeanRemote;
+import ejb.session.stateful.LeaveEntitySessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
 import ejb.session.stateless.StaffEntitySessionBeanRemote;
 import entity.DoctorEntity;

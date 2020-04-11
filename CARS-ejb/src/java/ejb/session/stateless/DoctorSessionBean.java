@@ -1,5 +1,6 @@
 package ejb.session.stateless;
 
+import ejb.session.stateful.AppointmentEntitySessionBeanLocal;
 import entity.AppointmentEntity;
 import entity.DoctorEntity;
 import java.sql.Date;

@@ -1,10 +1,9 @@
 package ejb.session.ws;
 
-import ejb.session.stateless.AppointmentEntitySessionBeanLocal;
-import ejb.session.stateless.DoctorSessionBeanLocal;
-import ejb.session.stateless.LeaveEntitySessionBeanLocal;
 import ejb.session.stateless.PatientSessionBeanLocal;
 import entity.AppointmentEntity;
+import entity.GenderEnum;
+import entity.PatientEntity;
 import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
@@ -18,21 +17,40 @@ public class CARSWebService {
 
     @EJB
     private PatientSessionBeanLocal patientSessionBeanLocal;
-    @EJB
-    private DoctorSessionBeanLocal doctorSessionBeanLocal;
-    @EJB
-    private AppointmentEntitySessionBeanLocal appointmentEntitySessionBeanLocal;
-    @EJB
-    private LeaveEntitySessionBeanLocal leaveEntitySessionBeanLocal;
+//    @EJB
+//    private DoctorSessionBeanLocal doctorSessionBeanLocal;
+//    @EJB
+//    private AppointmentEntitySessionBeanLocal appointmentEntitySessionBeanLocal;
+//    @EJB
+//    private LeaveEntitySessionBeanLocal leaveEntitySessionBeanLocal;
     
-    @WebMethod(operationName = "retrieveAppointmentByAppointmentId")
-    public AppointmentEntity retrieveAppointmentByAppointmentId(@WebParam Long appointmentId) throws AppointmentNotFoundException 
+//    @WebMethod(operationName = "retrieveAppointmentByAppointmentId")
+//    public AppointmentEntity retrieveAppointmentByAppointmentId(@WebParam Long appointmentId) throws AppointmentNotFoundException 
+//    {
+//        return appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(appointmentId);
+//    }
+    
+    @WebMethod(operationName = "createPatient")
+    public Long createPatient(@WebParam(name = "IdentityNumber") String identityNumber, 
+                              @WebParam(name = "Password") String password, 
+                              @WebParam(name = "FirstName") String firstName, 
+                              @WebParam(name = "LastName") String lastName, 
+                              @WebParam(name = "Gender") GenderEnum gender, 
+                              @WebParam(name = "Age") Integer age,
+                              @WebParam(name = "Phone") String phone, 
+                              @WebParam(name = "Address") String address)
     {
-        return appointmentEntitySessionBeanLocal.retrieveAppointmentByAppointmentId(appointmentId);
+//        GenderEnum setGender;
+//        if(gender.equals("M"))
+//        {
+//            setGender = setGender.M;
+//        }
+//        else
+//        {
+//            setGender = setGender.F;
+//        }
+        return patientSessionBeanLocal.createPatient(new PatientEntity(identityNumber, password, firstName, lastName, gender, age, phone, address));
     }
-    
-//    @WebMethod(operationName = "createPatienr")
-//    public Long createPatient(@WebParam )
 //    
 //    @WebMethod(operationName = "patientLogin")
 //    public Long pattientLogin(@WebParam )

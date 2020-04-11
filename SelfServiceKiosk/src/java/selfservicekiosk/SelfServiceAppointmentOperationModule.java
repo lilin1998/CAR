@@ -1,8 +1,8 @@
 package selfservicekiosk;
 
-import ejb.session.stateless.AppointmentEntitySessionBeanRemote;
+import ejb.session.stateful.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.DoctorSessionBeanRemote;
-import ejb.session.stateless.LeaveEntitySessionBeanRemote;
+import ejb.session.stateful.LeaveEntitySessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
 import entity.AppointmentEntity;
 import entity.DoctorEntity;

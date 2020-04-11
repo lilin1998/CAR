@@ -1,4 +1,4 @@
-package ejb.session.stateless;
+package ejb.session.stateful;
 
 import entity.LeaveEntity;
 import java.sql.Date;
@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.ejb.Local;
 import javax.ejb.Remote;
-import javax.ejb.Stateless;
+import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -15,7 +15,7 @@ import javax.persistence.Query;
 import util.exception.DoctorNotFoundException;
 import util.exception.LeaveApplicationException;
 
-@Stateless
+@Stateful
 @Local(LeaveEntitySessionBeanLocal.class)
 @Remote(LeaveEntitySessionBeanRemote.class)
 public class LeaveEntitySessionBean implements LeaveEntitySessionBeanRemote, LeaveEntitySessionBeanLocal 

@@ -1,4 +1,4 @@
-package ejb.session.stateless;
+package ejb.session.stateful;
 
 import entity.AppointmentEntity;
 import java.sql.Date;
@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Local;
 import javax.ejb.Remote;
-import javax.ejb.Stateless;
+import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -18,7 +18,7 @@ import util.exception.AppointmentNotFoundException;
 import util.exception.DoctorNotFoundException;
 import util.exception.PatientNotFoundException;
 
-@Stateless
+@Stateful
 @Local(AppointmentEntitySessionBeanLocal.class)
 @Remote(AppointmentEntitySessionBeanRemote.class)
 public class AppointmentEntitySessionBean implements AppointmentEntitySessionBeanRemote, AppointmentEntitySessionBeanLocal 
