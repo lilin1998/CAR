@@ -3,7 +3,6 @@ package ejb.session.stateless;
 import entity.DoctorEntity;
 import java.sql.Date;
 import java.util.List;
-import javax.ejb.Local;
 import util.exception.AppointmentNotFoundException;
 import util.exception.CreateDoctorException;
 import util.exception.DeleteDoctorException;
@@ -11,7 +10,6 @@ import util.exception.DoctorNotFoundException;
 import util.exception.LeaveApplicationException;
 import util.exception.UpdateDoctorException;
 
-@Local
 public interface DoctorSessionBeanLocal {
     
     public Long createNewDoctor(DoctorEntity newDoctorEntity);

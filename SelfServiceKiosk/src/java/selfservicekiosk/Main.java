@@ -4,6 +4,7 @@ import ejb.session.stateful.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.DoctorSessionBeanRemote;
 import ejb.session.stateful.LeaveEntitySessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
+import ejb.session.stateless.QueueSessionBeanRemote;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import javax.ejb.EJB;
@@ -11,6 +12,7 @@ import util.exception.AppointmentNotFoundException;
 import util.exception.DoctorNotFoundException;
 import util.exception.LeaveApplicationException;
 import util.exception.PatientNotFoundException;
+import util.exception.QueueNotFoundException;
 
 public class Main 
 {
@@ -22,10 +24,12 @@ public class Main
     private static AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
     @EJB
     private static LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote;
+    @EJB
+    private static QueueSessionBeanRemote queueSessionBeanRemote;
     
-    public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException, DoctorNotFoundException, AppointmentNotFoundException, PatientNotFoundException, LeaveApplicationException 
+    public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException, DoctorNotFoundException, AppointmentNotFoundException, PatientNotFoundException, LeaveApplicationException, QueueNotFoundException 
     {
-       MainApp mainApp = new MainApp(doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote, leaveEntitySessionBeanRemote);
+       MainApp mainApp = new MainApp(doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote, leaveEntitySessionBeanRemote, queueSessionBeanRemote);
         mainApp.runApp();
     }
 }

@@ -4,10 +4,12 @@ import ejb.session.stateful.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.DoctorSessionBeanRemote;
 import ejb.session.stateful.LeaveEntitySessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
+import ejb.session.stateless.QueueSessionBeanRemote;
 import entity.AppointmentEntity;
 import entity.DoctorEntity;
 import entity.LeaveEntity;
 import entity.PatientEntity;
+import entity.QueueEntity;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -19,6 +21,7 @@ import java.util.Scanner;
 import util.exception.CreateAppointmentException;
 import util.exception.DoctorNotFoundException;
 import util.exception.PatientNotFoundException;
+import util.exception.QueueNotFoundException;
 
 public class SelfServiceRegistrationOperationModule 
 {
@@ -26,10 +29,9 @@ public class SelfServiceRegistrationOperationModule
     private AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
     private PatientSessionBeanRemote patientSessionBeanRemote;
     private LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote;
+    private QueueSessionBeanRemote queueSessionBeanRemote;
     
     private PatientEntity currentPatientEntity;
-    
-    private static int queueNo = 4000;
     
     private String[] timeSlot = {"08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"};
     private String[] timeSlotThur = {"08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"};
@@ -40,7 +42,8 @@ public class SelfServiceRegistrationOperationModule
 
     
     
-    public SelfServiceRegistrationOperationModule(PatientEntity currentPatientEntity, DoctorSessionBeanRemote doctorSessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote) {
+    public SelfServiceRegistrationOperationModule(PatientEntity currentPatientEntity, DoctorSessionBeanRemote doctorSessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote, QueueSessionBeanRemote queueSessionBeanRemote) 
+    {
         this();
         
         this.currentPatientEntity = currentPatientEntity;
@@ -48,11 +51,12 @@ public class SelfServiceRegistrationOperationModule
         this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
         this.patientSessionBeanRemote = patientSessionBeanRemote;
         this.leaveEntitySessionBeanRemote = leaveEntitySessionBeanRemote;
+        this.queueSessionBeanRemote = queueSessionBeanRemote;
     }
 
     
     
-    public void registerWalkinConsultation() throws DoctorNotFoundException, PatientNotFoundException
+    public void registerWalkinConsultation() throws DoctorNotFoundException, PatientNotFoundException, QueueNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         
@@ -206,8 +210,19 @@ public class SelfServiceRegistrationOperationModule
                 String doctorName = doctor.getFirstName() + " " + doctor.getLastName();
 
                 System.out.println(patientName + " appointment with Dr. " + doctorName + " has been booked at " + bookingTime.substring(0, 5) + ".");
-                System.out.println("Queue number is: " + queueNo + ".\n");
-                queueNo++;
+                List<QueueEntity> currentQueue = queueSessionBeanRemote.retrieveQueueByDate(dateToday);
+                    if (currentQueue.isEmpty())
+                    {
+                        List<QueueEntity> pastQueueRecord = queueSessionBeanRemote.retrieveAllQueues();
+                        for(QueueEntity queueEntity : pastQueueRecord)
+                        { 
+                            queueSessionBeanRemote.deleteQueue(queueEntity.getQueueId());
+                        }
+                    }
+                    QueueEntity newQueueEntity = new QueueEntity(dateToday);
+                    queueSessionBeanRemote.createQueue(newQueueEntity);
+                    List<QueueEntity> updatedQueue = queueSessionBeanRemote.retrieveQueueByDate(dateToday);
+                    System.out.println("Queue number is: " + updatedQueue.get(0).getQueueId() + ".\n"); 
             }
         }
         catch (CreateAppointmentException ex)
@@ -218,7 +233,7 @@ public class SelfServiceRegistrationOperationModule
     
     
     
-    public void registerConsultationByAppointment()
+    public void registerConsultationByAppointment() throws QueueNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         
@@ -257,8 +272,20 @@ public class SelfServiceRegistrationOperationModule
                     String timeString = appointmentEntity.getTime().toString();
                     String patientName = appointmentEntity.getPatientEntity().getFirstName() + " " + appointmentEntity.getPatientEntity().getLastName();
                     System.out.println(patientName + " appointment is confirmed with " + doctorName + " at " + timeString.substring(0, 5) + ".");
-                    System.out.println("Queue Number is " + queueNo + ".\n");
-                    queueNo++;
+                    
+                    List<QueueEntity> currentQueue = queueSessionBeanRemote.retrieveQueueByDate(todayDate);
+                    if (currentQueue.isEmpty())
+                    {
+                        List<QueueEntity> pastQueueRecord = queueSessionBeanRemote.retrieveAllQueues();
+                        for(QueueEntity queueEntity : pastQueueRecord)
+                        { 
+                            queueSessionBeanRemote.deleteQueue(queueEntity.getQueueId());
+                        }
+                    }
+                    QueueEntity newQueueEntity = new QueueEntity(todayDate);
+                    queueSessionBeanRemote.createQueue(newQueueEntity);
+                    List<QueueEntity> updatedQueue = queueSessionBeanRemote.retrieveQueueByDate(todayDate);
+                    System.out.println("Queue number is: " + updatedQueue.get(0).getQueueId() + ".\n"); 
                 }
             }
         }  

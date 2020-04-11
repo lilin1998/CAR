@@ -4,6 +4,7 @@ import ejb.session.stateful.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.DoctorSessionBeanRemote;
 import ejb.session.stateful.LeaveEntitySessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
+import ejb.session.stateless.QueueSessionBeanRemote;
 import ejb.session.stateless.StaffEntitySessionBeanRemote;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -15,6 +16,7 @@ import util.exception.DoctorNotFoundException;
 import util.exception.LeaveApplicationException;
 import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
+import util.exception.QueueNotFoundException;
 import util.exception.StaffNotFoundException;
 import util.exception.UpdatePatientException;
 
@@ -30,10 +32,12 @@ public class Main
     private static AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
     @EJB
     private static LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote;
+    @EJB
+    private static  QueueSessionBeanRemote queueSessionBeanRemote;
     
-    public static void main(String[] args) throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException, CreateAppointmentException  
+    public static void main(String[] args) throws DoctorNotFoundException, PatientNotFoundException, UpdatePatientException, NoSuchAlgorithmException, NoSuchProviderException, PasswordException, DeletePatientException, AppointmentNotFoundException, StaffNotFoundException, LeaveApplicationException, CreateAppointmentException, QueueNotFoundException  
     {
-        MainApp mainApp = new MainApp(staffEntitySessionBeanRemote, doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote, leaveEntitySessionBeanRemote);
+        MainApp mainApp = new MainApp(staffEntitySessionBeanRemote, doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote, leaveEntitySessionBeanRemote, queueSessionBeanRemote);
         mainApp.runApp();
     }
     

@@ -7,8 +7,6 @@ import javax.ejb.Local;
 import util.exception.DoctorNotFoundException;
 import util.exception.LeaveApplicationException;
 
-
-@Local
 public interface LeaveEntitySessionBeanLocal 
 {
     public LeaveEntity createNewLeave(LeaveEntity leaveEntity);

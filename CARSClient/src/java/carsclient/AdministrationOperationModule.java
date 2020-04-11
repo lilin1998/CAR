@@ -43,6 +43,7 @@ public class AdministrationOperationModule
     public AdministrationOperationModule(DoctorSessionBeanRemote doctorSessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, StaffEntitySessionBeanRemote staffEntitySessionBeanRemote, LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote) 
     {
         this();
+        
         this.doctorSessionBeanRemote = doctorSessionBeanRemote;
         this.patientSessionBeanRemote = patientSessionBeanRemote;
         this.staffEntitySessionBeanRemote = staffEntitySessionBeanRemote;

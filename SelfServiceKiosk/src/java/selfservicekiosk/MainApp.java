@@ -4,6 +4,7 @@ import ejb.session.stateful.AppointmentEntitySessionBeanRemote;
 import ejb.session.stateless.DoctorSessionBeanRemote;
 import ejb.session.stateful.LeaveEntitySessionBeanRemote;
 import ejb.session.stateless.PatientSessionBeanRemote;
+import ejb.session.stateless.QueueSessionBeanRemote;
 import entity.GenderEnum;
 import entity.PatientEntity;
 import java.security.NoSuchAlgorithmException;
@@ -16,6 +17,7 @@ import util.exception.InvalidLoginCredentialException;
 import util.exception.LeaveApplicationException;
 import util.exception.PasswordException;
 import util.exception.PatientNotFoundException;
+import util.exception.QueueNotFoundException;
 
 public class MainApp 
 {
@@ -24,6 +26,7 @@ public class MainApp
     private PatientSessionBeanRemote patientSessionBeanRemote;
     private AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote;
     private LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote;
+    private QueueSessionBeanRemote queueSessionBeanRemote;
     
     private SelfServiceAppointmentOperationModule selfServiceAppointmentOperationModule;
     private SelfServiceRegistrationOperationModule selfServiceRegistrationOperationModule;
@@ -36,7 +39,7 @@ public class MainApp
 
     
     
-    public MainApp(DoctorSessionBeanRemote doctorSessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote) 
+    public MainApp(DoctorSessionBeanRemote doctorSessionBeanRemote, PatientSessionBeanRemote patientSessionBeanRemote, AppointmentEntitySessionBeanRemote appointmentEntitySessionBeanRemote, LeaveEntitySessionBeanRemote leaveEntitySessionBeanRemote, QueueSessionBeanRemote queueSessionBeanRemote) 
     {
         this();
         
@@ -44,11 +47,12 @@ public class MainApp
         this.patientSessionBeanRemote = patientSessionBeanRemote;
         this.appointmentEntitySessionBeanRemote = appointmentEntitySessionBeanRemote;
         this.leaveEntitySessionBeanRemote = leaveEntitySessionBeanRemote;
+        this.queueSessionBeanRemote = queueSessionBeanRemote;
     }
 
     
     
-    public void runApp() throws NoSuchAlgorithmException, NoSuchProviderException, DoctorNotFoundException, AppointmentNotFoundException, PatientNotFoundException, LeaveApplicationException
+    public void runApp() throws NoSuchAlgorithmException, NoSuchProviderException, DoctorNotFoundException, AppointmentNotFoundException, PatientNotFoundException, LeaveApplicationException, QueueNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -77,7 +81,7 @@ public class MainApp
                         doLogin();
                         System.out.println("Login successful!\n");
                         
-                        selfServiceRegistrationOperationModule = new SelfServiceRegistrationOperationModule(currentPatientEntity, doctorSessionBeanRemote, appointmentEntitySessionBeanRemote, patientSessionBeanRemote,leaveEntitySessionBeanRemote);
+                        selfServiceRegistrationOperationModule = new SelfServiceRegistrationOperationModule(currentPatientEntity, doctorSessionBeanRemote, appointmentEntitySessionBeanRemote, patientSessionBeanRemote, leaveEntitySessionBeanRemote, queueSessionBeanRemote);
                         selfServiceAppointmentOperationModule = new SelfServiceAppointmentOperationModule(currentPatientEntity, doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote, leaveEntitySessionBeanRemote);                   
                         menuMain();
                     }
@@ -187,7 +191,7 @@ public class MainApp
     
     
     
-    private void menuMain() throws DoctorNotFoundException, AppointmentNotFoundException, PatientNotFoundException, LeaveApplicationException
+    private void menuMain() throws DoctorNotFoundException, AppointmentNotFoundException, PatientNotFoundException, LeaveApplicationException, QueueNotFoundException
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
