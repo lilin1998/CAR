@@ -136,7 +136,7 @@ public class PatientSessionBean implements PatientSessionBeanRemote, PatientSess
         } 
         catch (NoResultException | NonUniqueResultException ex) 
         {
-            throw new PatientNotFoundException("Patient Identity Number " + identityNumber + " does not exist!");
+            throw new PatientNotFoundException("Patient Identity Number does not exist!");
         }
     }
     

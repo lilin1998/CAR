@@ -257,7 +257,6 @@ public class AdministrationOperationModule
         System.out.println("");
         PatientEntity patientEntity = patientSessionBeanRemote.retrievePatientByPatientIdentityNumber(patientIdentityNo);
         String input;
-        Integer integerInput;
         
         System.out.println("*** CARS :: Administration Operation :: Update Patient ***\n");
                 
@@ -298,16 +297,13 @@ public class AdministrationOperationModule
             }
         }
         
-        
         System.out.print("Enter Age (blank if no change)> ");
-        integerInput = scanner.nextInt();
-        if(integerInput > 0)
+        input = scanner.nextLine().trim();
+        if(input.length() > 0)
         {
-            patientEntity.setAge(integerInput);
+            patientEntity.setAge(Integer.valueOf(input));
         }
-        
-        scanner.nextLine();
-        
+                
         System.out.print("Enter Phone (blank if no change)> ");
         input = scanner.nextLine().trim();
         if(input.length() > 0)
