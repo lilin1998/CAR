@@ -33,6 +33,6 @@ public class Main
     public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchProviderException, DoctorNotFoundException, AppointmentNotFoundException, PatientNotFoundException, LeaveApplicationException, PatientIdentityNumberExist, UnknownPersistenceException, InputDataValidationException, QueueNotFoundException
     {
        MainApp mainApp = new MainApp(doctorSessionBeanRemote, patientSessionBeanRemote, appointmentEntitySessionBeanRemote, leaveEntitySessionBeanRemote, queueSessionBeanRemote);
-        mainApp.runApp();
+       mainApp.runApp();
     }
 }

@@ -6,6 +6,7 @@ import java.sql.Time;
 import java.util.List;
 import javax.ejb.Remote;
 import util.exception.AppointmentNotFoundException;
+import util.exception.CreateAppointmentException;
 import util.exception.DoctorNotFoundException;
 import util.exception.PatientNotFoundException;
 
@@ -31,4 +32,7 @@ public interface AppointmentEntitySessionBeanRemote
     public List<AppointmentEntity> retrieveAppointmentByPatientIdentityNoAndDate(String identityNo, Date date);
 
     public AppointmentEntity retrieveAppointmentByDoctorIdAndDateAndTime(Long doctorId, Date date, Time time) throws DoctorNotFoundException;
+
+    public void checkApptNotOnWeekendAnd2DaysLater(String date) throws CreateAppointmentException;
+
 }

@@ -11,8 +11,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
+@XmlRootElement
 public class PatientEntity implements Serializable 
 {
 
@@ -201,6 +204,7 @@ public class PatientEntity implements Serializable
         this.address = address;
     }
 
+    @XmlTransient
     public List<AppointmentEntity> getPatientAppointments() {
         return patientAppointments;
     }

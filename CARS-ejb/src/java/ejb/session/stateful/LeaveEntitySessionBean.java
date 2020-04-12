@@ -69,6 +69,16 @@ public class LeaveEntitySessionBean implements LeaveEntitySessionBeanRemote, Lea
         }
     }
     
+    @Override
+    public void checkifDocIsOnLeave(Long doctorId, Date date) throws LeaveApplicationException
+    {
+        LeaveEntity leaveEntity = retrieveLeaveByDateNDoctorId(doctorId, date);
+        if (leaveEntity != null)
+        {
+            throw new LeaveApplicationException("Doctor will be on leave that day!\n");
+        }
+    }    
+    
     
     
     @Override

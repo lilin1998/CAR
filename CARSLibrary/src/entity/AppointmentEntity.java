@@ -100,7 +100,6 @@ public class AppointmentEntity implements Serializable
         serialVersionUID = aSerialVersionUID;
     }
 
-    @XmlTransient
     public DoctorEntity getDoctorEntity() 
     {
         return doctorEntity;
@@ -131,7 +130,6 @@ public class AppointmentEntity implements Serializable
         this.time = time;
     }
 
-    @XmlTransient 
     public PatientEntity getPatientEntity() 
     {
         return patientEntity;

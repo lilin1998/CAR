@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 public class DoctorEntity implements Serializable 
@@ -141,6 +142,7 @@ public class DoctorEntity implements Serializable
         this.qualifications = qualifications;
     }
 
+    @XmlTransient
     public List<AppointmentEntity> getdoctorAppointments() {
         return doctorAppointments;
     }

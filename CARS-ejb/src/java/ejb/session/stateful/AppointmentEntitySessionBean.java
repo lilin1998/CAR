@@ -3,6 +3,7 @@ package ejb.session.stateful;
 import entity.AppointmentEntity;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +16,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.AppointmentNotFoundException;
+import util.exception.CreateAppointmentException;
 import util.exception.DoctorNotFoundException;
 import util.exception.PatientNotFoundException;
 
@@ -150,6 +152,28 @@ public class AppointmentEntitySessionBean implements AppointmentEntitySessionBea
             em.remove(appointmentToRemove);
         } catch (AppointmentNotFoundException ex) {
             Logger.getLogger(AppointmentEntitySessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Override
+    public void checkApptNotOnWeekendAnd2DaysLater(String date) throws CreateAppointmentException 
+    {
+        Date actualDate = Date.valueOf(date);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(actualDate);
+        int day = cal.get(Calendar.DAY_OF_WEEK);
+        
+        //set two days validation rule
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH, 1);
+        Date twoDaysLater = new Date((c.getTime()).getTime());
+        if (day == Calendar.SATURDAY || day == Calendar.SUNDAY)
+        {
+            throw new CreateAppointmentException("Appointment is not available on weekends!\n");
+        } 
+        else if (actualDate.compareTo(twoDaysLater) < 0) 
+        {
+            throw new CreateAppointmentException("Appointment must be booked at least two days in advance!\n");
         }
     }
 }
