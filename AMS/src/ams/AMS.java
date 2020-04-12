@@ -1,19 +1,17 @@
 package ams;
 
-import ws.client.AppointmentEntity;
 import ws.client.AppointmentNotFoundException_Exception;
+import ws.client.CreateAppointmentException_Exception;
+import ws.client.DoctorNotFoundException_Exception;
+import ws.client.InvalidLoginCredentialException_Exception;
+import ws.client.PatientNotFoundException_Exception;
+import ws.client.UnknownPersistenceException_Exception;
 
 public class AMS {
 
-    public static void main(String[] args) {
-        
-//        AppointmentEntity appointmentEntity = retrieveAppointmentByAppointmentId(Long.valueOf(1));
+    public static void main(String[] args) throws UnknownPersistenceException_Exception, InvalidLoginCredentialException_Exception, PatientNotFoundException_Exception, AppointmentNotFoundException_Exception, DoctorNotFoundException_Exception, CreateAppointmentException_Exception 
+    {
+        MainApp mainApp = new MainApp();
+        mainApp.runApp();
     }
-
-    private static AppointmentEntity retrieveAppointmentByAppointmentId(java.lang.Long arg0) throws AppointmentNotFoundException_Exception {
-        ws.client.CARSWebService_Service service = new ws.client.CARSWebService_Service();
-        ws.client.CARSWebService port = service.getCARSWebServicePort();
-        return port.retrieveAppointmentByAppointmentId(arg0);
-    }
-    
 }

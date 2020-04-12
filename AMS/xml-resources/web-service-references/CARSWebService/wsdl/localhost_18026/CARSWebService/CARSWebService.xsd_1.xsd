@@ -2,9 +2,200 @@
 
 <xs:element name="AppointmentNotFoundException" type="tns:AppointmentNotFoundException"/>
 
+<xs:element name="CreateAppointmentException" type="tns:CreateAppointmentException"/>
+
+<xs:element name="CreatePatientException" type="tns:CreatePatientException"/>
+
+<xs:element name="DoctorNotFoundException" type="tns:DoctorNotFoundException"/>
+
+<xs:element name="InputDataValidationException" type="tns:InputDataValidationException"/>
+
+<xs:element name="InvalidLoginCredentialException" type="tns:InvalidLoginCredentialException"/>
+
+<xs:element name="LeaveApplicationException" type="tns:LeaveApplicationException"/>
+
+<xs:element name="PasswordException" type="tns:PasswordException"/>
+
+<xs:element name="PatientIdentityNumberExist" type="tns:PatientIdentityNumberExist"/>
+
+<xs:element name="PatientNotFoundException" type="tns:PatientNotFoundException"/>
+
+<xs:element name="UnknownPersistenceException" type="tns:UnknownPersistenceException"/>
+
+<xs:element name="checkApptNotOnWeekendAnd2DaysLater" type="tns:checkApptNotOnWeekendAnd2DaysLater"/>
+
+<xs:element name="checkApptNotOnWeekendAnd2DaysLaterResponse" type="tns:checkApptNotOnWeekendAnd2DaysLaterResponse"/>
+
+<xs:element name="checkPassword" type="tns:checkPassword"/>
+
+<xs:element name="checkPasswordResponse" type="tns:checkPasswordResponse"/>
+
+<xs:element name="checkifDocIsOnLeave" type="tns:checkifDocIsOnLeave"/>
+
+<xs:element name="checkifDocIsOnLeaveResponse" type="tns:checkifDocIsOnLeaveResponse"/>
+
+<xs:element name="createNewAppointment" type="tns:createNewAppointment"/>
+
+<xs:element name="createNewAppointmentResponse" type="tns:createNewAppointmentResponse"/>
+
+<xs:element name="createPatient" type="tns:createPatient"/>
+
+<xs:element name="createPatientResponse" type="tns:createPatientResponse"/>
+
+<xs:element name="deleteAppointment" type="tns:deleteAppointment"/>
+
+<xs:element name="deleteAppointmentResponse" type="tns:deleteAppointmentResponse"/>
+
+<xs:element name="getSecurePassword" type="tns:getSecurePassword"/>
+
+<xs:element name="getSecurePasswordResponse" type="tns:getSecurePasswordResponse"/>
+
+<xs:element name="inputIsIncorrect" type="tns:inputIsIncorrect"/>
+
+<xs:element name="inputIsIncorrectResponse" type="tns:inputIsIncorrectResponse"/>
+
+<xs:element name="patientEntity" type="tns:patientEntity"/>
+
+<xs:element name="patientLogin" type="tns:patientLogin"/>
+
+<xs:element name="patientLoginResponse" type="tns:patientLoginResponse"/>
+
+<xs:element name="retrieveAllDoctors" type="tns:retrieveAllDoctors"/>
+
+<xs:element name="retrieveAllDoctorsResponse" type="tns:retrieveAllDoctorsResponse"/>
+
 <xs:element name="retrieveAppointmentByAppointmentId" type="tns:retrieveAppointmentByAppointmentId"/>
 
 <xs:element name="retrieveAppointmentByAppointmentIdResponse" type="tns:retrieveAppointmentByAppointmentIdResponse"/>
+
+<xs:element name="retrieveAppointmentByDoctorId" type="tns:retrieveAppointmentByDoctorId"/>
+
+<xs:element name="retrieveAppointmentByDoctorIdResponse" type="tns:retrieveAppointmentByDoctorIdResponse"/>
+
+<xs:element name="retrieveAppointmentByPatientIdentityNo" type="tns:retrieveAppointmentByPatientIdentityNo"/>
+
+<xs:element name="retrieveAppointmentByPatientIdentityNoResponse" type="tns:retrieveAppointmentByPatientIdentityNoResponse"/>
+
+<xs:element name="retrieveDoctorByDoctorId" type="tns:retrieveDoctorByDoctorId"/>
+
+<xs:element name="retrieveDoctorByDoctorIdResponse" type="tns:retrieveDoctorByDoctorIdResponse"/>
+
+<xs:element name="retrieveLeaveByDateNDoctorId" type="tns:retrieveLeaveByDateNDoctorId"/>
+
+<xs:element name="retrieveLeaveByDateNDoctorIdResponse" type="tns:retrieveLeaveByDateNDoctorIdResponse"/>
+
+<xs:element name="retrieveLeaveByDoctorId" type="tns:retrieveLeaveByDoctorId"/>
+
+<xs:element name="retrieveLeaveByDoctorIdResponse" type="tns:retrieveLeaveByDoctorIdResponse"/>
+
+<xs:element name="retrievePatientByPatientIdentityNumber" type="tns:retrievePatientByPatientIdentityNumber"/>
+
+<xs:element name="retrievePatientByPatientIdentityNumberResponse" type="tns:retrievePatientByPatientIdentityNumberResponse"/>
+
+<xs:element name="updateDoctorList" type="tns:updateDoctorList"/>
+
+<xs:element name="updateDoctorListResponse" type="tns:updateDoctorListResponse"/>
+
+<xs:element name="updatePatientList" type="tns:updatePatientList"/>
+
+<xs:element name="updatePatientListResponse" type="tns:updatePatientListResponse"/>
+
+<xs:complexType name="checkifDocIsOnLeave">
+<xs:sequence>
+<xs:element name="DoctorId" type="xs:long" minOccurs="0"/>
+<xs:element name="Date" type="tns:date" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="date">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="checkifDocIsOnLeaveResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="LeaveApplicationException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="updatePatientList">
+<xs:sequence>
+<xs:element name="IdentityNumber" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="updatePatientListResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="PatientNotFoundException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteAppointment">
+<xs:sequence>
+<xs:element name="AppointmentId" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteAppointmentResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="createNewAppointment">
+<xs:sequence>
+<xs:element name="NewAppointmentEntity" type="tns:appointmentEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="appointmentEntity">
+<xs:sequence>
+<xs:element name="appointmentId" type="xs:long" minOccurs="0"/>
+<xs:element name="date" type="tns:date" minOccurs="0"/>
+<xs:element name="doctorEntity" type="tns:doctorEntity" minOccurs="0"/>
+<xs:element name="patientEntity" type="tns:patientEntity" minOccurs="0"/>
+<xs:element name="time" type="tns:time" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="doctorEntity">
+<xs:sequence>
+<xs:element name="doctorId" type="xs:long" minOccurs="0"/>
+<xs:element name="firstName" type="xs:string" minOccurs="0"/>
+<xs:element name="lastName" type="xs:string" minOccurs="0"/>
+<xs:element name="qualifications" type="xs:string" minOccurs="0"/>
+<xs:element name="registration" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="patientEntity">
+<xs:sequence>
+<xs:element name="address" type="xs:string" minOccurs="0"/>
+<xs:element name="age" type="xs:int" minOccurs="0"/>
+<xs:element name="firstName" type="xs:string" minOccurs="0"/>
+<xs:element name="gender" type="tns:genderEnum" minOccurs="0"/>
+<xs:element name="identityNumber" type="xs:string" minOccurs="0"/>
+<xs:element name="lastName" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+<xs:element name="patientId" type="xs:long" minOccurs="0"/>
+<xs:element name="phone" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="time">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="createNewAppointmentResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:appointmentEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
 
 <xs:complexType name="retrieveAppointmentByAppointmentId">
 <xs:sequence>
@@ -18,25 +209,233 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="appointmentEntity">
-<xs:sequence>
-<xs:element name="appointmentId" type="xs:long" minOccurs="0"/>
-<xs:element name="date" type="tns:date" minOccurs="0"/>
-<xs:element name="time" type="tns:time" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="date">
-<xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="time">
-<xs:sequence/>
-</xs:complexType>
-
 <xs:complexType name="AppointmentNotFoundException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
+
+<xs:complexType name="inputIsIncorrect">
+<xs:sequence>
+<xs:element name="PatientIdentity" type="tns:patientEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="inputIsIncorrectResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="CreatePatientException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createPatient">
+<xs:sequence>
+<xs:element name="PatientEntity" type="tns:patientEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createPatientResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="InvalidLoginCredentialException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="PatientIdentityNumberExist">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="UnknownPersistenceException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="InputDataValidationException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="updateDoctorList">
+<xs:sequence>
+<xs:element name="DoctorId" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="updateDoctorListResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="DoctorNotFoundException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSecurePassword">
+<xs:sequence>
+<xs:element name="Password" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getSecurePasswordResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveAppointmentByPatientIdentityNo">
+<xs:sequence>
+<xs:element name="IdentityNumber" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveAppointmentByPatientIdentityNoResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:appointmentEntity" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveLeaveByDoctorId">
+<xs:sequence>
+<xs:element name="DoctorId" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveLeaveByDoctorIdResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:leaveEntity" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="leaveEntity">
+<xs:sequence>
+<xs:element name="date" type="tns:date" minOccurs="0"/>
+<xs:element name="doctorEntity" type="tns:doctorEntity" minOccurs="0"/>
+<xs:element name="leaveId" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="patientLogin">
+<xs:sequence>
+<xs:element name="arg0" type="xs:string" minOccurs="0"/>
+<xs:element name="arg1" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="patientLoginResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:patientEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="checkPassword">
+<xs:sequence>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="checkPasswordResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="PasswordException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="checkApptNotOnWeekendAnd2DaysLater">
+<xs:sequence>
+<xs:element name="Date" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="checkApptNotOnWeekendAnd2DaysLaterResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="CreateAppointmentException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveLeaveByDateNDoctorId">
+<xs:sequence>
+<xs:element name="DoctorId" type="xs:long" minOccurs="0"/>
+<xs:element name="Date" type="tns:date" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveLeaveByDateNDoctorIdResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:leaveEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveAppointmentByDoctorId">
+<xs:sequence>
+<xs:element name="DoctorId" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveAppointmentByDoctorIdResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:appointmentEntity" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveAllDoctors">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="retrieveAllDoctorsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:doctorEntity" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveDoctorByDoctorId">
+<xs:sequence>
+<xs:element name="DoctorId" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveDoctorByDoctorIdResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:doctorEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrievePatientByPatientIdentityNumber">
+<xs:sequence>
+<xs:element name="IdentityNumber" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrievePatientByPatientIdentityNumberResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:patientEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:simpleType name="genderEnum">
+<xs:restriction base="xs:string">
+<xs:enumeration value="M"/>
+<xs:enumeration value="F"/>
+<xs:enumeration value="UNKNOWN"/>
+</xs:restriction>
+</xs:simpleType>
 </xs:schema>
