@@ -228,7 +228,11 @@ public class SelfServiceAppointmentOperationModule
                                     {
                                         for (int j = 0; j < tempList.size(); j++)
                                         {
-                                            if (!timeSlot[i].equals(tempList.get(j)) && j == tempList.size() - 1)
+                                            if (timeSlot[i].equals(tempList.get(j)))
+                                            {
+                                                break;
+                                            }
+                                            else if (!timeSlot[i].equals(tempList.get(j)) && j == tempList.size() - 1)
                                             {
                                                 System.out.print(timeSlot[i] + " ");
                                             }
@@ -243,7 +247,11 @@ public class SelfServiceAppointmentOperationModule
                                     {
                                         for (int j = 0; j < tempList.size(); j++)
                                         {
-                                            if (!timeSlotThur[i].equals(tempList.get(j)) && j == tempList.size() - 1)
+                                            if (timeSlotThur[i].equals(tempList.get(j)))
+                                            {
+                                                break;
+                                            }
+                                            else if (!timeSlotThur[i].equals(tempList.get(j)) && j == tempList.size() - 1)
                                             {
                                                 System.out.print(timeSlotThur[i] + " ");
                                             }
@@ -258,6 +266,10 @@ public class SelfServiceAppointmentOperationModule
                                     {
                                         for (int j = 0; j < tempList.size(); j++)
                                         {
+                                            if (timeSlotFri[i].equals(tempList.get(j)))
+                                            {
+                                                break;
+                                            }
                                             if (!timeSlotFri[i].equals(tempList.get(j)) && j == tempList.size() - 1)
                                             {
                                                 System.out.print(timeSlotFri[i] + " ");

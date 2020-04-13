@@ -10,7 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import xmlhelper.DateDataAdapter;
+import xmlhelper.TimeDataAdapter;
+
 
 @Entity
 public class AppointmentEntity implements Serializable 
@@ -23,7 +26,7 @@ public class AppointmentEntity implements Serializable
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private DoctorEntity doctorEntity; //to get doctorId
-    @Column(nullable = false)
+    @Column(nullable = false) 
     private Date date;
     @Column(nullable = false)
     private Time time;
@@ -110,6 +113,7 @@ public class AppointmentEntity implements Serializable
         this.doctorEntity = doctorEntity;
     }
 
+    @XmlJavaTypeAdapter(DateDataAdapter.class)
     public Date getDate() 
     {
         return date;
@@ -120,6 +124,7 @@ public class AppointmentEntity implements Serializable
         this.date = date;
     }
 
+    @XmlJavaTypeAdapter(TimeDataAdapter.class)
     public Time getTime() 
     {
         return time;

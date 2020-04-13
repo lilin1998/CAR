@@ -206,7 +206,7 @@ public class AppointmentOperationModule
                     else 
                     {
                         System.out.println("Availability for " + doctor.getFirstName() + " " + doctor.getLastName() + " on " + date + ":");
-                        List<AppointmentEntity> appointments = appointmentEntitySessionBeanRemote.retrieveAppointmentByDoctorId(doctorId);
+                        List<AppointmentEntity> appointments = appointmentEntitySessionBeanRemote.retrieveAppointmentByDoctorIdAndDate(doctorId, actualDate);
                         if (appointments.isEmpty()) 
                         {
                             if (day >= Calendar.MONDAY && day <= Calendar.WEDNESDAY) 
@@ -238,11 +238,8 @@ public class AppointmentOperationModule
                         {
                             for (AppointmentEntity appointmentEntity : appointments) 
                             {
-                                if (actualDate.equals(appointmentEntity.getDate())) 
-                                {
-                                    String unavailableTime = appointmentEntity.getTime().toString();
-                                    tempList.add(unavailableTime.substring(0, 5));
-                                }
+                                String unavailableTime = appointmentEntity.getTime().toString();
+                                tempList.add(unavailableTime.substring(0, 5));
                             }
                             if (tempList.isEmpty())
                             {
@@ -279,7 +276,11 @@ public class AppointmentOperationModule
                                     {
                                         for (int j = 0; j < tempList.size(); j++)
                                         {
-                                            if (!timeSlot[i].equals(tempList.get(j)) && j == tempList.size() - 1)
+                                            if (timeSlot[i].equals(tempList.get(j)))
+                                            {
+                                                break;
+                                            }
+                                            else if (!timeSlot[i].equals(tempList.get(j)) && j == tempList.size() - 1)
                                             {
                                                 System.out.print(timeSlot[i] + " ");
                                             }
@@ -294,7 +295,11 @@ public class AppointmentOperationModule
                                     {
                                         for (int j = 0; j < tempList.size(); j++)
                                         {
-                                            if (!timeSlotThur[i].equals(tempList.get(j)) && j == tempList.size() - 1)
+                                            if (timeSlotThur[i].equals(tempList.get(j)))
+                                            {
+                                                break;
+                                            }
+                                            else if (!timeSlotThur[i].equals(tempList.get(j)) && j == tempList.size() - 1)
                                             {
                                                 System.out.print(timeSlotThur[i] + " ");
                                             }
@@ -309,6 +314,10 @@ public class AppointmentOperationModule
                                     {
                                         for (int j = 0; j < tempList.size(); j++)
                                         {
+                                            if (timeSlotFri[i].equals(tempList.get(j)))
+                                            {
+                                                break;
+                                            }
                                             if (!timeSlotFri[i].equals(tempList.get(j)) && j == tempList.size() - 1)
                                             {
                                                 System.out.print(timeSlotFri[i] + " ");

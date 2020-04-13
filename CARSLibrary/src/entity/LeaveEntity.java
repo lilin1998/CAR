@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import xmlhelper.DateDataAdapter;
 
 @Entity
 public class LeaveEntity implements Serializable {
@@ -75,6 +77,7 @@ public class LeaveEntity implements Serializable {
         this.doctorEntity = doctorEntity;
     }
 
+    @XmlJavaTypeAdapter(DateDataAdapter.class)
     public Date getDate() {
         return date;
     }

@@ -122,10 +122,10 @@ public class CARSWebService {
     {
         return leaveEntitySessionBeanLocal.retrieveLeaveByDateNDoctorId(doctorId, date);
     }
-    
-    @WebMethod(operationName = "checkifDocIsOnLeave")
-    public void checkifDocIsOnLeave(@WebParam(name = "DoctorId")Long doctorId,
-                                    @WebParam(name = "Date") Date date) throws LeaveApplicationException
+
+    @WebMethod(operationName = "checkIfDoctorIsOnLeave")
+    public void checkIfDoctorIsOnLeave(@WebParam(name = "DoctorId") Long doctorId,
+                                       @WebParam(name = "Date") String date) throws LeaveApplicationException
     {
         leaveEntitySessionBeanLocal.checkifDocIsOnLeave(doctorId, date);
     }

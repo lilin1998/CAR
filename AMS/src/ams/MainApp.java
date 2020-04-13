@@ -15,6 +15,7 @@ import ws.client.DoctorNotFoundException_Exception;
 import ws.client.GenderEnum;
 import ws.client.InputDataValidationException_Exception;
 import ws.client.InvalidLoginCredentialException_Exception;
+import ws.client.LeaveApplicationException_Exception;
 import ws.client.PasswordException_Exception;
 import ws.client.PatientEntity;
 import ws.client.PatientIdentityNumberExist_Exception;
@@ -29,7 +30,7 @@ public class MainApp
     private String[] timeSlotThur = {"08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"};
     private String[] timeSlotFri = {"08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00"};
     
-    public void runApp() throws UnknownPersistenceException_Exception, InvalidLoginCredentialException_Exception, PatientNotFoundException_Exception, AppointmentNotFoundException_Exception, DoctorNotFoundException_Exception, CreateAppointmentException_Exception 
+    public void runApp() throws UnknownPersistenceException_Exception, InvalidLoginCredentialException_Exception, PatientNotFoundException_Exception, AppointmentNotFoundException_Exception, DoctorNotFoundException_Exception, CreateAppointmentException_Exception, LeaveApplicationException_Exception 
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -144,15 +145,18 @@ public class MainApp
         
         if(identityNo.length() > 0 && password.length() > 0)
         {
-            try {
+            try 
+            {
                currentPatientEntity = patientLogin(identityNo, password);  
-            } catch (InvalidLoginCredentialException_Exception ex) {
+            } 
+            catch (InvalidLoginCredentialException_Exception ex) 
+            {
                 System.out.println("An error has occurred while logging in: " + ex.getMessage());
             }   
         }
     }
     
-    private void menuMain() throws PatientNotFoundException_Exception, AppointmentNotFoundException_Exception, DoctorNotFoundException_Exception, CreateAppointmentException_Exception
+    private void menuMain() throws PatientNotFoundException_Exception, AppointmentNotFoundException_Exception, DoctorNotFoundException_Exception, CreateAppointmentException_Exception, LeaveApplicationException_Exception
     {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -223,7 +227,7 @@ public class MainApp
                 for (AppointmentEntity appointmentEntity : patientAppointments)
                 {
                     String doctorName = appointmentEntity.getDoctorEntity().getFirstName() + " " + appointmentEntity.getDoctorEntity().getLastName();
-                    String timeString = appointmentEntity.getTime().toString();
+                    String timeString = appointmentEntity.getTime();
                     
                     System.out.printf("%-3s|%-12s|%-7s|%-13s\n", appointmentEntity.getAppointmentId(), appointmentEntity.getDate(), timeString.substring(0, 5), doctorName);
                 }
@@ -236,7 +240,7 @@ public class MainApp
         }
     }
     
-    private void addNewAppointment() throws CreateAppointmentException_Exception, PatientNotFoundException_Exception
+    private void addNewAppointment() throws CreateAppointmentException_Exception, PatientNotFoundException_Exception, DoctorNotFoundException_Exception, LeaveApplicationException_Exception
     {
         Scanner scanner = new Scanner(System.in);
         Long doctorId;
@@ -279,11 +283,11 @@ public class MainApp
         try
         {
             doctor = retrieveDoctorByDoctorId(doctorId);
-//            try 
-//            {
+            try 
+            {
                 //check if doctor is on leave
-//                checkifDocIsOnLeave(doctorId, actualDate);
-//             
+                checkIfDoctorIsOnLeave(doctorId, date);
+             
                 try 
                 {
                     checkApptNotOnWeekendAnd2DaysLater(date);
@@ -310,8 +314,8 @@ public class MainApp
                         }
                     } else {
                         for (AppointmentEntity appointmentEntity : appointments) {
-                            if (actualDate.equals(appointmentEntity.getDate())) {
-                                String unavailableTime = appointmentEntity.getTime().toString();
+                            if (date.equals(appointmentEntity.getDate())) {
+                                String unavailableTime = appointmentEntity.getTime();
                                 tempList.add(unavailableTime.substring(0, 5));
                             }
                         }
@@ -333,34 +337,61 @@ public class MainApp
                                 }
                                 System.out.print("\n");
                             }
-                        } else {
-                            if (day >= Calendar.MONDAY && day <= Calendar.WEDNESDAY) {
-                                for (int i = 0; i < timeSlot.length; i++) {
-                                    for (int j = 0; j < tempList.size(); j++) {
-                                        if (!timeSlot[i].equals(tempList.get(j)) && j == tempList.size() - 1) {
-                                            System.out.print(timeSlot[i] + " ");
-                                        }
-                                    }
-                                }
-                                System.out.print("\n");
-                                tempList.clear();
-                            } else if (day == Calendar.THURSDAY) {
-                                for (int i = 0; i < timeSlotThur.length; i++) {
-                                    for (int j = 0; j < tempList.size(); j++) {
-                                        if (!timeSlotThur[i].equals(tempList.get(j)) && j == tempList.size() - 1) {
-                                            System.out.print(timeSlotThur[i] + " ");
-                                        }
-                                    }
-                                }
-                                System.out.print("\n");
-                                tempList.clear();
-                            } else //Friday
+                        } 
+                        else 
+                        {
+                            if (day >= Calendar.MONDAY && day <= Calendar.WEDNESDAY) 
                             {
-                                for (int i = 0; i < timeSlotFri.length; i++) {
-                                    for (int j = 0; j < tempList.size(); j++) {
-                                        if (!timeSlotFri[i].equals(tempList.get(j)) && j == tempList.size() - 1) {
-                                            System.out.print(timeSlotFri[i] + " ");
-                                        }
+                                for (int i = 0; i < timeSlot.length; i++) 
+                                {
+                                    for (int j = 0; j < tempList.size(); j++) 
+                                    {
+                                        if (timeSlot[i].equals(tempList.get(j)))
+                                            {
+                                                break;
+                                            }
+                                            else if (!timeSlot[i].equals(tempList.get(j)) && j == tempList.size() - 1)
+                                            {
+                                                System.out.print(timeSlot[i] + " ");
+                                            }
+                                    }
+                                }
+                                System.out.print("\n");
+                                tempList.clear();
+                            } 
+                            else if (day == Calendar.THURSDAY) 
+                            {
+                                for (int i = 0; i < timeSlotThur.length; i++) 
+                                {
+                                    for (int j = 0; j < tempList.size(); j++) 
+                                    {
+                                        if (timeSlotThur[i].equals(tempList.get(j)))
+                                            {
+                                                break;
+                                            }
+                                            else if (!timeSlotThur[i].equals(tempList.get(j)) && j == tempList.size() - 1)
+                                            {
+                                                System.out.print(timeSlotThur[i] + " ");
+                                            }
+                                    }
+                                }
+                                System.out.print("\n");
+                                tempList.clear();
+                            } 
+                            else //Friday
+                            {
+                                for (int i = 0; i < timeSlotFri.length; i++) 
+                                {
+                                    for (int j = 0; j < tempList.size(); j++) 
+                                    {
+                                        if (timeSlotFri[i].equals(tempList.get(j)))
+                                            {
+                                                break;
+                                            }
+                                            if (!timeSlotFri[i].equals(tempList.get(j)) && j == tempList.size() - 1)
+                                            {
+                                                System.out.print(timeSlotFri[i] + " ");
+                                            }
                                     }
                                 }
                                 System.out.print("\n");
@@ -375,16 +406,19 @@ public class MainApp
                     String timeformat = timeInput + ":00";
                     Time time = Time.valueOf(timeformat);
 
-                    try {
+                    try 
+                    {
                         patient = retrievePatientByPatientIdentityNumber(currentPatientEntity.getIdentityNumber());
-                    } catch (PatientNotFoundException_Exception ex) {
+                    } 
+                    catch (PatientNotFoundException_Exception ex) 
+                    {
                         System.out.println("Error in retrieving Patient's identity Number!\n");
                     }
 
                     AppointmentEntity newAppointmentEntity = new AppointmentEntity();
-//                    newAppointmentEntity.setDate(actualDate);
+                    newAppointmentEntity.setDate(actualDate.toString());
                     newAppointmentEntity.setDoctorEntity(doctor);
-//                    newAppointmentEntity.setTime(time);
+                    newAppointmentEntity.setTime(time.toString());
                     newAppointmentEntity.setPatientEntity(patient);
                     createNewAppointment(newAppointmentEntity);
                     updatePatientList(currentPatientEntity.getIdentityNumber());
@@ -400,11 +434,11 @@ public class MainApp
                 {
                     System.out.println(ex.getMessage());
                 } 
-//            }
-//            catch (LeaveApplicationException_Exception ex)
-//            {
-//                System.out.println(ex.getMessage());
-//            }
+            }
+            catch (LeaveApplicationException_Exception ex)
+            {
+                System.out.println(ex.getMessage());
+            }
         }
         catch (DoctorNotFoundException_Exception ex)
         {
@@ -433,9 +467,9 @@ public class MainApp
                 for (AppointmentEntity appointmentEntity:patientAppointments)
                 {
                     String doctorName = appointmentEntity.getDoctorEntity().getFirstName() + " " + appointmentEntity.getDoctorEntity().getLastName();
-                    String timeString = appointmentEntity.getTime().toString();
+                    String timeString = appointmentEntity.getTime();
                     
-                    System.out.printf("%-3s|%-12s|%-7s|%-13s\n", appointmentEntity.getAppointmentId(), appointmentEntity.getDate(), timeString.substring(0, 5), "doctorName");
+                    System.out.printf("%-3s|%-12s|%-7s|%-13s\n", appointmentEntity.getAppointmentId(), appointmentEntity.getDate(), timeString.substring(0, 5), doctorName);
                 }
                 System.out.print("\n");
             }
@@ -446,8 +480,8 @@ public class MainApp
             AppointmentEntity appointmentEntity = retrieveAppointmentByAppointmentId(appointmentId);
             DoctorEntity doctorEntity = appointmentEntity.getDoctorEntity();
             String doctorName = doctorEntity.getFirstName() + " " + doctorEntity.getLastName();
-            String timeString = appointmentEntity.getTime().toString();
-            String dateString = appointmentEntity.getDate().toString();
+            String timeString = appointmentEntity.getTime();
+            String dateString = appointmentEntity.getDate();
             String patientName = currentPatientEntity.getFirstName() + " " + currentPatientEntity.getLastName();
             
             //remove appointment from database
@@ -557,9 +591,11 @@ public class MainApp
         ws.client.CARSWebService_Service service = new ws.client.CARSWebService_Service();
         ws.client.CARSWebService port = service.getCARSWebServicePort();
         return port.createNewAppointment(newAppointmentEntity);
+    } 
+
+    private static void checkIfDoctorIsOnLeave(java.lang.Long doctorId, java.lang.String date) throws LeaveApplicationException_Exception {
+        ws.client.CARSWebService_Service service = new ws.client.CARSWebService_Service();
+        ws.client.CARSWebService port = service.getCARSWebServicePort();
+        port.checkIfDoctorIsOnLeave(doctorId, date);
     }
-    
-    
-    
-    
 }

@@ -16,5 +16,5 @@ public interface LeaveEntitySessionBeanLocal
 
     public void checkIfDoctorAppliedInSameWeek(Long doctorId, Date date) throws DoctorNotFoundException, LeaveApplicationException;
 
-    public void checkifDocIsOnLeave(Long doctorId, Date date) throws LeaveApplicationException;
+    public void checkifDocIsOnLeave(Long doctorId, String date) throws LeaveApplicationException;
 }
