@@ -30,6 +30,7 @@ public class StaffEntity implements Serializable {
     public StaffEntity(String firstName, String lastName, String username, String password) 
     {
         this();
+        
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -37,6 +38,8 @@ public class StaffEntity implements Serializable {
     }
 
     public StaffEntity(Long staffId, String firstName, String lastName, String username, String password) {
+        this();
+        
         this.staffId = staffId;
         this.firstName = firstName;
         this.lastName = lastName;
