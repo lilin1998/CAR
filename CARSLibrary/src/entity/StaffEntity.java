@@ -12,7 +12,7 @@ public class StaffEntity implements Serializable {
 
     private static long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long staffId;
     @Column(length = 32, nullable = false)
     private String firstName;

@@ -525,13 +525,6 @@ public class AdministrationOperationModule
             doctorEntity.setLastName(input);
         }
         
-        System.out.print("Enter Registration (blank if no change)> ");
-        input = scanner.nextLine().trim();
-        if(input.length() > 0)
-        {
-            doctorEntity.setRegistration(input);
-        }
-        
         System.out.print("Enter Qualification (blank if no change)> ");
         input = scanner.nextLine().trim();
         if(input.length() > 0)

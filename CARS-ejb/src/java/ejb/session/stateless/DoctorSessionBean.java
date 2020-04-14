@@ -118,7 +118,6 @@ public class DoctorSessionBean implements DoctorSessionBeanRemote, DoctorSession
                     d.setFirstName(doctorEntity.getFirstName());
                     d.setLastName(doctorEntity.getLastName());
                     d.setQualifications(doctorEntity.getQualifications());
-                    d.setRegistration(doctorEntity.getRegistration());
                 } else {
                     throw new UpdateDoctorException("ID of doctor record to be updated does not match the existing record");
                 }
