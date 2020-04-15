@@ -1,8 +1,10 @@
 package ejb.session.stateless;
 
 import ejb.session.stateful.AppointmentEntitySessionBeanLocal;
+import ejb.session.stateful.LeaveEntitySessionBeanLocal;
 import entity.AppointmentEntity;
 import entity.DoctorEntity;
+import entity.LeaveEntity;
 import java.sql.Date;
 import java.util.List;
 import java.util.Set;
@@ -43,6 +45,8 @@ public class DoctorSessionBean implements DoctorSessionBeanRemote, DoctorSession
     
     @EJB
     private AppointmentEntitySessionBeanLocal appointmentEntitySessionBeanLocal; 
+    @EJB
+    private LeaveEntitySessionBeanLocal leaveEntitySessionBeanLocal;
     
     public DoctorSessionBean() 
     {
@@ -159,6 +163,12 @@ public class DoctorSessionBean implements DoctorSessionBeanRemote, DoctorSession
         DoctorEntity doctorEntityToRemove = retrieveDoctorByDoctorId(doctorId);
         
         List<AppointmentEntity> appointmentEntity = appointmentEntitySessionBeanLocal.retrieveAppointmentByDoctorId(doctorId);
+        List<LeaveEntity> leaveEntity = leaveEntitySessionBeanLocal.retrieveLeaveByDoctorId(doctorId);
+
+        if(!leaveEntity.isEmpty())
+        {
+            leaveEntitySessionBeanLocal.deleteLeave(doctorId);
+        }
         
         if(appointmentEntity.isEmpty())
         {
