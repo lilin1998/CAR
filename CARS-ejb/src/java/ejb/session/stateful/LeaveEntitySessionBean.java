@@ -119,4 +119,16 @@ public class LeaveEntitySessionBean implements LeaveEntitySessionBeanRemote, Lea
             }
         }       
     }
+    
+    @Override
+    public void deleteLeave(Long doctorId) throws DoctorNotFoundException
+    {
+        List<LeaveEntity> leaveToRemove = retrieveLeaveByDoctorId(doctorId);
+
+        for (LeaveEntity leaveEntity : leaveToRemove) 
+        {
+            em.remove(leaveEntity);
+        }
+
+    }
 }
