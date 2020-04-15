@@ -26,13 +26,13 @@
 
 <xs:element name="checkApptNotOnWeekendAnd2DaysLaterResponse" type="tns:checkApptNotOnWeekendAnd2DaysLaterResponse"/>
 
-<xs:element name="checkIfDoctorIsOnLeave" type="tns:checkIfDoctorIsOnLeave"/>
-
-<xs:element name="checkIfDoctorIsOnLeaveResponse" type="tns:checkIfDoctorIsOnLeaveResponse"/>
-
 <xs:element name="checkPassword" type="tns:checkPassword"/>
 
 <xs:element name="checkPasswordResponse" type="tns:checkPasswordResponse"/>
+
+<xs:element name="checkifDocIsOnLeave" type="tns:checkifDocIsOnLeave"/>
+
+<xs:element name="checkifDocIsOnLeaveResponse" type="tns:checkifDocIsOnLeaveResponse"/>
 
 <xs:element name="createNewAppointment" type="tns:createNewAppointment"/>
 
@@ -100,6 +100,27 @@
 
 <xs:element name="updatePatientListResponse" type="tns:updatePatientListResponse"/>
 
+<xs:complexType name="checkifDocIsOnLeave">
+<xs:sequence>
+<xs:element name="DoctorId" type="xs:long" minOccurs="0"/>
+<xs:element name="Date" type="tns:date" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="date">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="checkifDocIsOnLeaveResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="LeaveApplicationException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="updatePatientList">
 <xs:sequence>
 <xs:element name="IdentityNumber" type="xs:string" minOccurs="0"/>
@@ -135,10 +156,10 @@
 <xs:complexType name="appointmentEntity">
 <xs:sequence>
 <xs:element name="appointmentId" type="xs:long" minOccurs="0"/>
-<xs:element name="date" type="xs:string" minOccurs="0"/>
+<xs:element name="date" type="tns:date" minOccurs="0"/>
 <xs:element name="doctorEntity" type="tns:doctorEntity" minOccurs="0"/>
 <xs:element name="patientEntity" type="tns:patientEntity" minOccurs="0"/>
-<xs:element name="time" type="xs:string" minOccurs="0"/>
+<xs:element name="time" type="tns:time" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -164,6 +185,10 @@
 <xs:element name="patientId" type="xs:long" minOccurs="0"/>
 <xs:element name="phone" type="xs:string" minOccurs="0"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="time">
+<xs:sequence/>
 </xs:complexType>
 
 <xs:complexType name="createNewAppointmentResponse">
@@ -296,7 +321,7 @@
 
 <xs:complexType name="leaveEntity">
 <xs:sequence>
-<xs:element name="date" type="xs:string" minOccurs="0"/>
+<xs:element name="date" type="tns:date" minOccurs="0"/>
 <xs:element name="doctorEntity" type="tns:doctorEntity" minOccurs="0"/>
 <xs:element name="leaveId" type="xs:long" minOccurs="0"/>
 </xs:sequence>
@@ -347,6 +372,19 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="retrieveLeaveByDateNDoctorId">
+<xs:sequence>
+<xs:element name="DoctorId" type="xs:long" minOccurs="0"/>
+<xs:element name="Date" type="tns:date" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveLeaveByDateNDoctorIdResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:leaveEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="retrieveAppointmentByDoctorId">
 <xs:sequence>
 <xs:element name="DoctorId" type="xs:long" minOccurs="0"/>
@@ -356,40 +394,6 @@
 <xs:complexType name="retrieveAppointmentByDoctorIdResponse">
 <xs:sequence>
 <xs:element name="return" type="tns:appointmentEntity" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="checkIfDoctorIsOnLeave">
-<xs:sequence>
-<xs:element name="DoctorId" type="xs:long" minOccurs="0"/>
-<xs:element name="Date" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="checkIfDoctorIsOnLeaveResponse">
-<xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="LeaveApplicationException">
-<xs:sequence>
-<xs:element name="message" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="retrieveLeaveByDateNDoctorId">
-<xs:sequence>
-<xs:element name="DoctorId" type="xs:long" minOccurs="0"/>
-<xs:element name="Date" type="tns:date" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="date">
-<xs:sequence/>
-</xs:complexType>
-
-<xs:complexType name="retrieveLeaveByDateNDoctorIdResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:leaveEntity" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 

@@ -19,7 +19,4 @@ public interface LeaveEntitySessionBeanRemote
     public void checkIfDoctorAppliedInSameWeek(Long doctorId, Date date) throws DoctorNotFoundException, LeaveApplicationException;    
 
     public void checkifDocIsOnLeave(Long doctorId, String date) throws LeaveApplicationException;
-
-    public void deleteLeave(Long doctorId) throws DoctorNotFoundException;
-
 }

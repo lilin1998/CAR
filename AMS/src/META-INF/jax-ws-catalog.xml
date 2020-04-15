@@ -2,6 +2,4 @@
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
     <system systemId="http://localhost:18026/CARSWebService/CARSWebService?wsdl" uri="wsdl/localhost_18026/CARSWebService/CARSWebService.wsdl"/>
     <system systemId="http://localhost:18026/CARSWebService/CARSWebService?xsd=1" uri="wsdl/localhost_18026/CARSWebService/CARSWebService.xsd_1.xsd"/>
-    <system systemId="http://localhost:24998/CARSWebService/CARSWebService?wsdl" uri="wsdl/localhost_24998/CARSWebService/CARSWebService.wsdl"/>
-    <system systemId="http://localhost:24998/CARSWebService/CARSWebService?xsd=1" uri="wsdl/localhost_24998/CARSWebService/CARSWebService.xsd_1.xsd"/>
 </catalog>

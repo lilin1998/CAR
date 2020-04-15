@@ -19,8 +19,8 @@
     </target>
     <target name="wsimport-client-CARSWebService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/CARSWebService"/>
-        <property name="wsdl-CARSWebService" location="xml-resources/web-service-references/CARSWebService/wsdl/localhost_24998/CARSWebService/CARSWebService.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/CARSWebService" destdir="${build.generated.dir}/jax-wsCache/CARSWebService" wsdl="${wsdl-CARSWebService}" catalog="catalog.xml" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:24998/CARSWebService/CARSWebService?wsdl" xnocompile="true" xendorsed="true" package="ws.client">
+        <property name="wsdl-CARSWebService" location="xml-resources/web-service-references/CARSWebService/wsdl/localhost_18026/CARSWebService/CARSWebService.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/CARSWebService" destdir="${build.generated.dir}/jax-wsCache/CARSWebService" wsdl="${wsdl-CARSWebService}" catalog="catalog.xml" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:18026/CARSWebService/CARSWebService?wsdl" xnocompile="true" xendorsed="true" package="ws.client">
             <depends file="${wsdl-CARSWebService}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/CARSWebService"/>
         </wsimport>
